@@ -1,0 +1,232 @@
+$ python scripts/tune.py
+
+載入 cohort（收聽特徵：啟用）...
+  收聽特徵覆蓋 feb 81.56% · mar 82.01%
+  訓練 feb 992,912 列 × 61 特徵，流失率 6.3915%
+  驗證 mar 970,959 列 × 61 特徵，流失率 8.9941%
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  Feb 內部三段切分：訓練 695,435 · early stopping 148,540 · 選參數 148,937
+
+隨機搜尋 30 組 + 1 組基準設定（Mar cohort 全程不參與）...
+  基準（M1/M2 設定）　sel 0.07850　533 輪　(12 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 1/30　sel 0.07843　633 輪　(19 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 2/30　sel 0.07833　376 輪　(17 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 3/30　sel 0.07827　768 輪　(19 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 4/30　sel 0.07815　310 輪　(9 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 5/30　sel 0.07839　290 輪　(10 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 6/30　sel 0.07832　265 輪　(11 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 7/30　sel 0.07889　261 輪　(10 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 8/30　sel 0.07875　844 輪　(34 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 9/30　sel 0.07907　149 輪　(8 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 10/30　sel 0.07840　213 輪　(8 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 11/30　sel 0.07866　113 輪　(5 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 12/30　sel 0.07863　160 輪　(8 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 13/30　sel 0.07842　179 輪　(7 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 14/30　sel 0.07830　294 輪　(9 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 15/30　sel 0.07840　150 輪　(10 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 16/30　sel 0.07864　179 輪　(8 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 17/30　sel 0.07888　111 輪　(4 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 18/30　sel 0.07819　455 輪　(16 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 19/30　sel 0.07816　610 輪　(20 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 20/30　sel 0.07882　425 輪　(16 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 21/30　sel 0.07896　113 輪　(8 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 22/30　sel 0.07824　748 輪　(16 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 23/30　sel 0.07857　502 輪　(15 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 24/30　sel 0.07846　601 輪　(23 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 25/30　sel 0.07856　570 輪　(20 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 26/30　sel 0.07818　462 輪　(17 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 27/30　sel 0.07834　269 輪　(10 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 28/30　sel 0.07853　473 輪　(9 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 29/30　sel 0.07858　737 輪　(28 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  trial 30/30　sel 0.07855　253 輪　(10 秒)
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+
+搜尋完成，共 414 秒
+
+==============================================================================
+隨機搜尋結果（依 Feb-sel 分數排序；trial 0 = M1/M2 的設定）
+==============================================================================
+shape: (15, 13)
+┌──────┬───────┬──────────────┬──────┬───┬───────────┬───────────┬────────────┬────────────────────┐
+│ 排名 ┆ trial ┆ sel log loss ┆ 輪數 ┆ … ┆ lambda_l1 ┆ lambda_l2 ┆ cat_smooth ┆ min_data_per_group │
+│ ---  ┆ ---   ┆ ---          ┆ ---  ┆   ┆ ---       ┆ ---       ┆ ---        ┆ ---                │
+│ i64  ┆ i64   ┆ f64          ┆ i64  ┆   ┆ f64       ┆ f64       ┆ i64        ┆ i64                │
+╞══════╪═══════╪══════════════╪══════╪═══╪═══════════╪═══════════╪════════════╪════════════════════╡
+│ 1    ┆ 4     ┆ 0.07815      ┆ 310  ┆ … ┆ 1.5483    ┆ 0.2672    ┆ 70         ┆ 474                │
+│ 2    ┆ 19    ┆ 0.07816      ┆ 610  ┆ … ┆ 0.0013    ┆ 0.003     ┆ 94         ┆ 120                │
+│ 3    ┆ 26    ┆ 0.07818      ┆ 462  ┆ … ┆ 0.0012    ┆ 0.0065    ┆ 173        ┆ 293                │
+│ 4    ┆ 18    ┆ 0.07819      ┆ 455  ┆ … ┆ 0.0054    ┆ 1.0789    ┆ 111        ┆ 230                │
+│ 5    ┆ 22    ┆ 0.07824      ┆ 748  ┆ … ┆ 0.3695    ┆ 0.0988    ┆ 181        ┆ 105                │
+│ 6    ┆ 3     ┆ 0.07827      ┆ 768  ┆ … ┆ 0.0011    ┆ 0.0618    ┆ 74         ┆ 114                │
+│ 7    ┆ 14    ┆ 0.0783       ┆ 294  ┆ … ┆ 0.0263    ┆ 0.0188    ┆ 63         ┆ 77                 │
+│ 8    ┆ 6     ┆ 0.07832      ┆ 265  ┆ … ┆ 0.3062    ┆ 0.0308    ┆ 85         ┆ 258                │
+│ 9    ┆ 2     ┆ 0.07833      ┆ 376  ┆ … ┆ 0.115     ┆ 2.0118    ┆ 90         ┆ 183                │
+│ 10   ┆ 27    ┆ 0.07834      ┆ 269  ┆ … ┆ 0.0551    ┆ 1.2805    ┆ 189        ┆ 497                │
+│ 11   ┆ 5     ┆ 0.07839      ┆ 290  ┆ … ┆ 0.018     ┆ 0.0111    ┆ 140        ┆ 129                │
+│ 12   ┆ 10    ┆ 0.0784       ┆ 213  ┆ … ┆ 0.0925    ┆ 0.2544    ┆ 113        ┆ 447                │
+│ 13   ┆ 15    ┆ 0.0784       ┆ 150  ┆ … ┆ 0.6247    ┆ 0.9553    ┆ 178        ┆ 124                │
+│ 14   ┆ 13    ┆ 0.07842      ┆ 179  ┆ … ┆ 0.0033    ┆ 0.0132    ┆ 8          ┆ 60                 │
+│ 15   ┆ 1     ┆ 0.07843      ┆ 633  ┆ … ┆ 1.4524    ┆ 4.1742    ┆ 36         ┆ 333                │
+└──────┴───────┴──────────────┴──────┴───┴───────────┴───────────┴────────────┴────────────────────┘
+
+最佳 trial 4：sel 0.07815
+基準 trial 0　　：sel 0.07850
+sel 上的改善：+0.00035
+
+在 Mar cohort 上評估（本次搜尋唯一一次看時間外分數）...
+
+--- 最佳參數 · Mar 分群回報（SPEC §4.5）---
+shape: (3, 6)
+┌──────────┬────────┬──────────┬────────────┬──────────────┬──────────┐
+│ 分群     ┆ 人數   ┆ 佔比     ┆ 實際流失率 ┆ 平均預測機率 ┆ log_loss │
+│ ---      ┆ ---    ┆ ---      ┆ ---        ┆ ---          ┆ ---      │
+│ str      ┆ i64    ┆ f64      ┆ f64        ┆ f64          ┆ f64      │
+╞══════════╪════════╪══════════╪════════════╪══════════════╪══════════╡
+│ 新進用戶 ┆ 89266  ┆ 0.091936 ┆ 0.398371   ┆ 0.273746     ┆ 0.522656 │
+│ 重複用戶 ┆ 881693 ┆ 0.908064 ┆ 0.058714   ┆ 0.044104     ┆ 0.118252 │
+│ 全體     ┆ 970959 ┆ 1.0      ┆ 0.089941   ┆ 0.065216     ┆ 0.155431 │
+└──────────┴────────┴──────────┴────────────┴──────────────┴──────────┘
+
+==============================================================================
+基準設定　Mar log loss 0.15679
+調參之後　Mar log loss 0.15543
+實際改善　+0.00136（-0.87%）
+==============================================================================
+
+⚠️ sel 上的改善通常大於 Mar 上的改善，兩者的差距就是「挑了 31 組裡最合
+   Feb 胃口的那組」所帶來的樂觀偏誤。回報時以 Mar 的數字為準。
+
+最佳參數已寫入 <data_root>\interim\m3_artifacts\best_params.yaml
+MLflow run ce729767cf8244ca8007e5ce663177fc
+
+
+--- stderr ---

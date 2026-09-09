@@ -1,0 +1,174 @@
+{
+  "artifact_version": 1,
+  "created_at": "2026-08-12T10:14:11+08:00",
+  "model": {
+    "name": "CatBoost",
+    "best_iteration": 1963,
+    "calibrated": false,
+    "sha256": "0886f746aa559bbde2edca5d9cb22525043df0191bd3242ba3f5b4be56b84233",
+    "format": "catboost_cbm",
+    "file": "model.cbm"
+  },
+  "features": {
+    "names": [
+      "tenure_days",
+      "days_since_last_tx",
+      "days_since_registration",
+      "n_tx",
+      "n_cancel_hist",
+      "cancel_rate",
+      "mean_paid",
+      "last_is_cancel",
+      "last_is_auto_renew",
+      "last_paid",
+      "last_price",
+      "last_plan_days",
+      "discount_amount",
+      "price_per_day",
+      "is_free_plan",
+      "zero_collected",
+      "in_members",
+      "bd_clean",
+      "bd_valid",
+      "city",
+      "registered_via",
+      "last_payment_method_id",
+      "gender_code",
+      "log_min_days_before",
+      "log_max_days_before",
+      "log7_active_days",
+      "log7_secs",
+      "log7_plays",
+      "log7_completed",
+      "log7_unq",
+      "log14_active_days",
+      "log14_secs",
+      "log14_plays",
+      "log14_completed",
+      "log14_unq",
+      "log30_active_days",
+      "log30_secs",
+      "log30_plays",
+      "log30_completed",
+      "log30_unq",
+      "log90_active_days",
+      "log90_secs",
+      "log90_plays",
+      "log90_completed",
+      "log90_unq",
+      "log7_completion",
+      "log7_active_ratio",
+      "log7_secs_per_active_day",
+      "log14_completion",
+      "log14_active_ratio",
+      "log14_secs_per_active_day",
+      "log30_completion",
+      "log30_active_ratio",
+      "log30_secs_per_active_day",
+      "log90_completion",
+      "log90_active_ratio",
+      "log90_secs_per_active_day",
+      "log_has_logs",
+      "log_trend_7_30",
+      "log_trend_30_90",
+      "log_trend_active_7_30"
+    ],
+    "n": 61,
+    "categorical": [
+      "city",
+      "registered_via",
+      "last_payment_method_id",
+      "gender_code"
+    ]
+  },
+  "fingerprints": {
+    "code": {
+      "feature_build": "8d315ddc171dceac",
+      "log_features": "5000be29929b60d0"
+    },
+    "cache_code": {
+      "cohort": "fa7695a98cb1a4bb",
+      "log_features": "5000be29929b60d0"
+    },
+    "caches": {
+      "feb_t7": {
+        "cohort": "fa7695a98cb1a4bb",
+        "log_features": "5000be29929b60d0"
+      },
+      "mar_t7": {
+        "cohort": "fa7695a98cb1a4bb",
+        "log_features": "5000be29929b60d0"
+      }
+    },
+    "stale": []
+  },
+  "cohort": {
+    "train": "feb_t7",
+    "eval": "mar_t7",
+    "design": "lead7",
+    "lead_days": 7,
+    "score_date": null,
+    "cutoff_definition": "expire_date_minus_7d",
+    "cutoff_window": [
+      20170125,
+      20170221
+    ],
+    "observation": "2017-04",
+    "n_train": 991774,
+    "n_eval": 969386,
+    "train_churn_rate": 0.063566,
+    "eval_churn_rate": 0.088947
+  },
+  "effective_lead_days": {
+    "min": 7,
+    "median": 7,
+    "max": 7,
+    "negative": 0
+  },
+  "metrics": {
+    "log_loss": 0.17921,
+    "constant_baseline": 0.30494,
+    "improvement": 0.4123,
+    "note": "同一 artifact 內部可比；跨 lead_days 的比較見 reports/lead_time.json"
+  },
+  "assumptions": {
+    "r_save": 0.15,
+    "c_offer": 150,
+    "ltv_saved": 2067.6,
+    "monthly_arpu": 131.4,
+    "expected_months": 15.73,
+    "months_source": "feb_t7_churn_rate",
+    "p_star": 0.4836
+  },
+  "hyperparameters": {
+    "loss_function": "Logloss",
+    "eval_metric": "Logloss",
+    "learning_rate": 0.05,
+    "depth": 6,
+    "l2_leaf_reg": 3.0,
+    "random_seed": 42,
+    "one_hot_max_size": 8,
+    "allow_writing_files": false
+  },
+  "training": {
+    "num_boost_round": 2000,
+    "early_stopping_rounds": 100,
+    "inner_valid_fraction": 0.2,
+    "inner_split_seed": 42
+  },
+  "configs": [
+    "configs/model_comparison.yaml",
+    "configs/business.yaml"
+  ],
+  "git": {
+    "sha": "f5e550e14ec05854a165bdedb8aab5c776cc5cf3",
+    "dirty": false,
+    "reused_model": false
+  },
+  "limits": [
+    "模型預測的是「會不會流失」，不是「投放優惠能不能改變他的行為」——後者需要 uplift modeling 與 A/B 實驗，本資料集沒有實驗組／對照組結構。",
+    "機率未校準（§7.10：校準器讓每一項指標都變差，成因是 cohort 間的基準率漂移，校準器看不到它）。整體偏低估，用在金額上要記得這件事。",
+    "members_v3.csv 是 2017-11-13 的快照，不是 as-of cutoff 的狀態 ——本專案唯一已知且無法修復的洩漏，影響上界 0.93% 的 gain。",
+    "cutoff_definition = expire_date_minus_7d。提前 7 天評分，這是能上線的版本；代價見 §7.15。"
+  ]
+}

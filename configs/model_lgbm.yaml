@@ -1,0 +1,90 @@
+# M1 LightGBM baseline 超參數。
+#
+# SPEC §8：「設定管理 · Hydra / YAML in configs/ · 禁止硬編碼超參數」。
+# 程式碼裡不得出現任何數字常數，要調參數改這個檔案就好，
+# 而且每次實驗用了什麼設定可以直接從 git 歷史查。
+#
+# 這組是**未調參的合理起點**，不是最佳解。調參是 M3 的工作 ——
+# M1 的目的只是確認整條 pipeline 通、並取得一個誠實的基準分數。
+
+# 特徵集開關。M1 與 M2 的差異只有這一行 —— 其他設定全部不動，
+# 這樣分數的變化才能歸因於「加了收聽行為特徵」而不是別的原因（§10 Q3）。
+features:
+  use_logs: true
+
+model:
+  objective: binary
+  metric: binary_logloss
+
+  # 學習率壓低配合較多輪數，讓 early stopping 有機會挑到好的停點。
+  learning_rate: 0.05
+
+  # 31 是 LightGBM 預設值。資料有 99 萬列，樹可以再深，
+  # 但 baseline 階段先不動 —— 免得分數好壞分不清是特徵還是調參的功勞。
+  num_leaves: 31
+
+  # 每個葉子至少 100 筆。流失率只有 6.39%，葉子太小會學到雜訊。
+  min_data_in_leaf: 100
+
+  # 特徵與樣本各抽 80%，降低過擬合。
+  feature_fraction: 0.8
+  bagging_fraction: 0.8
+  bagging_freq: 1
+
+  lambda_l2: 1.0
+
+  # 類別特徵的正則化。payment_method_id 有 33 種，不加約束容易過擬合。
+  cat_smooth: 10
+  min_data_per_group: 100
+
+  num_threads: 0    # 0 = 自動偵測核心數
+  verbosity: -1
+  seed: 42
+  deterministic: true
+
+training:
+  num_boost_round: 2000
+  early_stopping_rounds: 100
+  log_every_n: 100
+
+  # Early stopping 用的驗證集**從訓練 cohort 內部切出來**，不用 Mar cohort。
+  #
+  # 為什麼：如果用 Mar 做 early stopping，選停在哪一輪這個決定就看過 Mar 了，
+  # 回報的 Mar 分數會偏樂觀 —— 而 Mar 分數正是我們要拿來跟 0.30746 比較、
+  # 並外推到測試集的那個數字。留給它一個乾淨的身分。
+  #
+  # 在 Feb cohort 內部做隨機分層切分是安全的：契約測試已驗證 msno 在單一
+  # cohort 內不重複，且 as-of 截斷是逐用戶計算的，所以不存在時間洩漏。
+  # SPEC §4.2 也明文允許「在 Feb cohort 內部另做 StratifiedKFold」。
+  inner_valid_fraction: 0.2
+  inner_split_seed: 42
+
+# SPEC §7 要求 M1「回報 5-fold 標準差」。
+#
+# SPEC §4.2 對它的定位寫得很明確：「在 Feb cohort 內部另做 5-fold
+# StratifiedKFold，用途**僅限**估計模型變異數。模型選擇一律以時間外驗證
+# 分數為準。」所以這個數字不拿來挑模型，只用來回答「這個分數穩不穩」。
+#
+# 每個 fold 用**固定輪數**而非各自 early stopping：變異數要衡量的是
+# 「換一批資料，分數會差多少」，各 fold 自己找停點會把停點的變異也混進來，
+# 兩種來源就分不開了。輪數取主訓練的 best_iteration。
+cv:
+  enabled: true
+  n_splits: 5
+  seed: 42
+
+# 實驗追蹤（SPEC §8）。
+#
+# ⚠️ 後端用 SQLite 而不是傳統的 ./mlruns 目錄。MLflow 3.x 起檔案系統後端
+# 進入維護模式，直接呼叫會拋 MlflowException 要求改用資料庫後端。
+# SQLite 只是 repo 根目錄下的一個檔案，不需要跑伺服器，已在 .gitignore 中。
+#
+# 看結果：make mlflow（等同 uv run mlflow ui --backend-store-uri sqlite:///mlflow.db）
+tracking:
+  enabled: true
+  backend: sqlite:///mlflow.db
+  artifact_dir: mlartifacts
+  experiment: kkbox-churn
+  # 留空則依 features.use_logs 自動命名為 m1_transactions_only / m2_with_logs，
+  # 這樣 MLflow 上的 run 一眼就看得出是哪個特徵集。
+  run_name: null

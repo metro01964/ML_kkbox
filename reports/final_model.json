@@ -1,0 +1,120 @@
+{
+  "artifact": "catboost_fixed_full",
+  "git_sha": "bd027ba23cf1b24418cb78a1611c5d9214feee2c",
+  "git_dirty": false,
+  "cohorts": [
+    "feb_fixed",
+    "mar_fixed"
+  ],
+  "merged": {
+    "rows": 1757398,
+    "users": 973588,
+    "users_in_both": 783810,
+    "churn_rate": 0.067682
+  },
+  "split": {
+    "kind": "four_way_group_split",
+    "groups": "msno",
+    "fractions": {
+      "train": 0.7,
+      "es": 0.1,
+      "sel": 0.1,
+      "cal": 0.1
+    },
+    "seed": 20260810,
+    "sizes": {
+      "train": 1230177,
+      "es": 175741,
+      "sel": 175740,
+      "cal": 175740
+    },
+    "decisions": {
+      "train": "模型權重",
+      "es": "停在第幾輪",
+      "sel": "要不要採用校準器",
+      "cal": "fit 校準器"
+    }
+  },
+  "final_fit": {
+    "best_iteration": 1974,
+    "seconds": 705.4,
+    "sel_log_loss": 0.1505,
+    "sel_constant_baseline": 0.24759
+  },
+  "calibration": {
+    "fitted_on": "cal",
+    "judged_on": "sel",
+    "sel_logloss_raw": 0.1505,
+    "sel_logloss_calibrated": 0.15067,
+    "delta": 0.00016,
+    "sel_actual_rate": 0.06768,
+    "sel_mean_pred_raw": 0.06749,
+    "sel_mean_pred_calibrated": 0.06779,
+    "adopted": false,
+    "threshold": 0.0
+  },
+  "cv_arms": [
+    {
+      "label": "合規：StratifiedGroupKFold(groups=msno)　4 折",
+      "grouped": true,
+      "fold_scores": [
+        0.15157,
+        0.15089,
+        0.15093,
+        0.15007
+      ],
+      "best_iterations": [
+        1908,
+        1893,
+        1997,
+        1745
+      ],
+      "mean": 0.1508678539048512,
+      "std": 0.0006139060950384454,
+      "crossing_users_total": 0
+    },
+    {
+      "label": "違規：StratifiedKFold（不看 msno）　4 折",
+      "grouped": false,
+      "fold_scores": [
+        0.15082,
+        0.15163,
+        0.15034,
+        0.1507
+      ],
+      "best_iterations": [
+        1887,
+        2000,
+        1933,
+        1939
+      ],
+      "mean": 0.1508727230477535,
+      "std": 0.0005437036856569785,
+      "crossing_users_total": 1175188
+    }
+  ],
+  "red_line_4_gap": {
+    "grouped_mean": 0.150868,
+    "random_mean": 0.150873,
+    "absolute": -5e-06,
+    "relative": -3e-05,
+    "pooled_fold_std": 0.00058,
+    "in_fold_sigma": -0.008,
+    "below_resolution": true,
+    "sigma_resolution": 1.0,
+    "crossing_users_in_random_arm": 1175188
+  },
+  "out_of_time_reference": {
+    "artifact": "catboost_fixed",
+    "train": "feb_fixed",
+    "eval": "mar_fixed",
+    "log_loss": 0.17342,
+    "constant_baseline": 0.27329
+  },
+  "how_to_read": [
+    "本地所有分數都算在合併資料內部（同分布），不是時間外估計。要跟 M1–M6 的任何一個數字比大小之前，先確認那個數字算在哪個 cohort 上。",
+    "red_line_4_gap 是這份報告的重點：兩臂只差一個切分規則，差多少就是「隨機切分讓模型看起來好多少」。**差值要跟 pooled_fold_std 一起讀** —— 低於一倍折間標準差時，結論是「這個實驗量不到」，不是「等於 0」。",
+    "out_of_time_reference 與本地分數的差，量的是另一件事：同分布估計比時間外估計樂觀多少。那個差與切分規則無關，是「合併之後失去時間外驗證集」的代價。",
+    "校準器的 fit 與採用判斷分在 cal / sel 兩段 —— 同一塊資料上判斷，isotonic 幾乎不可能變差，那個判斷沒有內容。"
+  ]
+}

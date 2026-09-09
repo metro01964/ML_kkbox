@@ -1,0 +1,43 @@
+{
+  "model": "catboost",
+  "configs": [
+    "configs/business.yaml",
+    "configs/model_comparison.yaml"
+  ],
+  "mar_log_loss": 0.15367,
+  "assumptions": {
+    "r_save": 0.15,
+    "c_offer": 150,
+    "ltv_saved": 2054.1,
+    "monthly_arpu": 131.3,
+    "expected_months": 15.65,
+    "months_source": "feb_churn_rate",
+    "p_star": 0.4868
+  },
+  "optimum_by_expected": {
+    "k": 0.05,
+    "n_targeted": 48548,
+    "threshold_probability": 0.4895,
+    "expected_simulated_net": 4962931,
+    "label_settled_simulated_net": 5535298,
+    "precision": 0.8569,
+    "lift": 9.53
+  },
+  "targeted_slice_calibration": {
+    "人數": 48548.0,
+    "平均預測": 0.8186,
+    "實際流失率": 0.856863,
+    "偏差": -0.038263,
+    "相對偏差": -0.044655
+  },
+  "cohort_calibration": {
+    "實際流失率": 0.089941,
+    "平均預測": 0.065521,
+    "偏差": -0.02442,
+    "相對偏差": -0.271513
+  },
+  "figures": [
+    "reports/figures/12_expected_net_revenue.png",
+    "reports/figures/13_sensitivity_heatmap.png"
+  ]
+}

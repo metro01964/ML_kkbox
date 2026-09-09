@@ -1,0 +1,281 @@
+$ python scripts/select_features.py
+
+載入 cohort（收聽特徵：啟用）...
+  收聽特徵覆蓋 feb 81.56% · mar 82.01%
+  訓練 feb 992,912 列 × 61 特徵，流失率 6.3915%
+  驗證 mar 970,959 列 × 61 特徵，流失率 8.9941%
+  Feb 內部三段切分：訓練 695,435 · early stopping 148,540 · 選門檻 148,937
+
+全特徵基準訓練中...
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  → Feb-sel log loss 0.07850　61 特徵　停在第 533 輪　(11 秒)
+
+Null importance：真實 1 次 + 打亂標籤 20 次，每次固定 533 輪（只用 Feb-train 695,435 列）
+真實標籤訓練（固定 533 輪）...
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 1/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 2/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 3/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 4/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 5/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 6/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 7/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 8/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 9/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 10/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 11/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 12/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 13/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 14/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 15/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 16/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 17/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 18/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 19/20
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  null run 20/20
+
+==============================================================================
+Null importance 摘要（依 score 遞減）
+==============================================================================
+shape: (61, 6)
+┌───────────────────────────┬─────────────┬──────────┬──────────┬───────────┬─────────┐
+│ feature                   ┆ actual_gain ┆ null_p75 ┆ null_max ┆ beats_pct ┆ score   │
+│ ---                       ┆ ---         ┆ ---      ┆ ---      ┆ ---       ┆ ---     │
+│ str                       ┆ f64         ┆ f64      ┆ f64      ┆ f64       ┆ f64     │
+╞═══════════════════════════╪═════════════╪══════════╪══════════╪═══════════╪═════════╡
+│ last_is_cancel            ┆ 649727.0    ┆ 161.3    ┆ 225.1    ┆ 1.0       ┆ 8.295   │
+│ last_is_auto_renew        ┆ 456790.6    ┆ 166.6    ┆ 209.2    ┆ 1.0       ┆ 7.911   │
+│ in_members                ┆ 605.1       ┆ 0.0      ┆ 11.0     ┆ 1.0       ┆ 6.405   │
+│ days_since_last_tx        ┆ 274172.8    ┆ 2170.9   ┆ 2376.3   ┆ 1.0       ┆ 4.838   │
+│ last_paid                 ┆ 38749.7     ┆ 529.1    ┆ 641.0    ┆ 1.0       ┆ 4.292   │
+│ last_payment_method_id    ┆ 160178.6    ┆ 4470.7   ┆ 4697.2   ┆ 1.0       ┆ 3.579   │
+│ last_price                ┆ 10389.7     ┆ 330.4    ┆ 394.0    ┆ 1.0       ┆ 3.445   │
+│ cancel_rate               ┆ 45523.9     ┆ 1540.9   ┆ 1759.7   ┆ 1.0       ┆ 3.385   │
+│ last_plan_days            ┆ 5711.7      ┆ 196.3    ┆ 304.7    ┆ 1.0       ┆ 3.366   │
+│ registered_via            ┆ 4964.8      ┆ 266.2    ┆ 345.2    ┆ 1.0       ┆ 2.922   │
+│ log90_active_days         ┆ 53096.0     ┆ 3163.8   ┆ 3503.3   ┆ 1.0       ┆ 2.82    │
+│ price_per_day             ┆ 9777.4      ┆ 671.4    ┆ 859.8    ┆ 1.0       ┆ 2.677   │
+│ is_free_plan              ┆ 125.6       ┆ 7.7      ┆ 28.3     ┆ 1.0       ┆ 2.672   │
+│ log7_active_days          ┆ 6926.6      ┆ 513.9    ┆ 579.9    ┆ 1.0       ┆ 2.599   │
+│ discount_amount           ┆ 723.4       ┆ 55.6     ┆ 158.1    ┆ 1.0       ┆ 2.547   │
+│ log_min_days_before       ┆ 19072.2     ┆ 1503.8   ┆ 1784.9   ┆ 1.0       ┆ 2.54    │
+│ log7_plays                ┆ 18184.8     ┆ 2432.7   ┆ 2886.1   ┆ 1.0       ┆ 2.011   │
+│ n_tx                      ┆ 18115.9     ┆ 2619.4   ┆ 2783.5   ┆ 1.0       ┆ 1.933   │
+│ n_cancel_hist             ┆ 1872.8      ┆ 302.4    ┆ 431.2    ┆ 1.0       ┆ 1.82    │
+│ mean_paid                 ┆ 15755.9     ┆ 2946.1   ┆ 3229.5   ┆ 1.0       ┆ 1.676   │
+│ log90_active_ratio        ┆ 3128.4      ┆ 778.5    ┆ 861.8    ┆ 1.0       ┆ 1.39    │
+│ log_trend_active_7_30     ┆ 10624.9     ┆ 3160.2   ┆ 3405.2   ┆ 1.0       ┆ 1.212   │
+│ log_max_days_before       ┆ 6365.9      ┆ 2127.1   ┆ 2410.1   ┆ 1.0       ┆ 1.096   │
+│ log14_plays               ┆ 7447.9      ┆ 2500.1   ┆ 2876.1   ┆ 1.0       ┆ 1.091   │
+│ zero_collected            ┆ 25.7        ┆ 8.8      ┆ 18.2     ┆ 1.0       ┆ 0.968   │
+│ log14_active_days         ┆ 2493.6      ┆ 1041.4   ┆ 1221.0   ┆ 1.0       ┆ 0.872   │
+│ tenure_days               ┆ 9100.3      ┆ 4759.2   ┆ 4989.4   ┆ 1.0       ┆ 0.648   │
+│ log30_active_days         ┆ 2723.7      ┆ 1623.2   ┆ 1853.1   ┆ 1.0       ┆ 0.517   │
+│ log14_active_ratio        ┆ 359.8       ┆ 219.7    ┆ 288.3    ┆ 1.0       ┆ 0.489   │
+│ log30_unq                 ┆ 5251.2      ┆ 3256.5   ┆ 3434.2   ┆ 1.0       ┆ 0.478   │
+│ log14_unq                 ┆ 5197.7      ┆ 3420.6   ┆ 3573.0   ┆ 1.0       ┆ 0.418   │
+│ log_trend_30_90           ┆ 7530.9      ┆ 5255.0   ┆ 5501.3   ┆ 1.0       ┆ 0.36    │
+│ log_trend_7_30            ┆ 6375.3      ┆ 4486.6   ┆ 4913.4   ┆ 1.0       ┆ 0.351   │
+│ city                      ┆ 8000.2      ┆ 6390.7   ┆ 6604.5   ┆ 1.0       ┆ 0.224   │
+│ days_since_registration   ┆ 7408.3      ┆ 6402.5   ┆ 6834.3   ┆ 1.0       ┆ 0.146   │
+│ log14_secs                ┆ 2614.0      ┆ 2271.6   ┆ 2383.7   ┆ 1.0       ┆ 0.14    │
+│ bd_clean                  ┆ 5749.3      ┆ 5171.0   ┆ 5570.3   ┆ 1.0       ┆ 0.106   │
+│ log90_plays               ┆ 3344.6      ┆ 3068.9   ┆ 3143.1   ┆ 1.0       ┆ 0.086   │
+│ log7_unq                  ┆ 3514.5      ┆ 3240.0   ┆ 3429.4   ┆ 1.0       ┆ 0.081   │
+│ log7_completion           ┆ 4770.5      ┆ 5059.2   ┆ 5392.4   ┆ 0.3       ┆ -0.059  │
+│ log7_secs_per_active_day  ┆ 4030.6      ┆ 4368.8   ┆ 4824.2   ┆ 0.1       ┆ -0.081  │
+│ log90_completion          ┆ 4919.6      ┆ 5392.3   ┆ 5720.8   ┆ 0.2       ┆ -0.092  │
+│ log30_plays               ┆ 2214.4      ┆ 2478.4   ┆ 2688.0   ┆ 0.0       ┆ -0.113  │
+│ log90_unq                 ┆ 3264.3      ┆ 3660.9   ┆ 3752.7   ┆ 0.05      ┆ -0.115  │
+│ log30_completion          ┆ 3977.0      ┆ 4515.9   ┆ 5075.3   ┆ 0.05      ┆ -0.127  │
+│ log14_completion          ┆ 4392.8      ┆ 5042.1   ┆ 5227.5   ┆ 0.15      ┆ -0.138  │
+│ log30_secs_per_active_day ┆ 3575.5      ┆ 4154.7   ┆ 4530.8   ┆ 0.05      ┆ -0.15   │
+│ log7_completed            ┆ 1860.7      ┆ 2264.8   ┆ 2551.9   ┆ 0.05      ┆ -0.197  │
+│ log30_completed           ┆ 2027.5      ┆ 2541.0   ┆ 2700.7   ┆ 0.0       ┆ -0.226  │
+│ log7_secs                 ┆ 1621.6      ┆ 2053.8   ┆ 2367.2   ┆ 0.0       ┆ -0.237  │
+│ log90_secs                ┆ 2189.3      ┆ 2773.7   ┆ 2894.7   ┆ 0.0       ┆ -0.237  │
+│ log30_secs                ┆ 1759.4      ┆ 2263.4   ┆ 2581.1   ┆ 0.0       ┆ -0.252  │
+│ log14_secs_per_active_day ┆ 3288.1      ┆ 4465.7   ┆ 4622.5   ┆ 0.0       ┆ -0.306  │
+│ log90_completed           ┆ 1969.7      ┆ 2821.7   ┆ 3196.8   ┆ 0.0       ┆ -0.36   │
+│ log90_secs_per_active_day ┆ 3067.9      ┆ 4445.7   ┆ 4962.3   ┆ 0.0       ┆ -0.371  │
+│ log14_completed           ┆ 1595.1      ┆ 2472.8   ┆ 2575.0   ┆ 0.0       ┆ -0.439  │
+│ gender_code               ┆ 485.3       ┆ 774.2    ┆ 886.6    ┆ 0.0       ┆ -0.468  │
+│ log7_active_ratio         ┆ 89.0        ┆ 142.7    ┆ 154.6    ┆ 0.35      ┆ -0.479  │
+│ log30_active_ratio        ┆ 245.1       ┆ 411.7    ┆ 439.7    ┆ 0.0       ┆ -0.521  │
+│ bd_valid                  ┆ 0.0         ┆ 50.6     ┆ 67.5     ┆ 0.0       ┆ -23.026 │
+│ log_has_logs              ┆ 0.0         ┆ 0.0      ┆ 0.0      ┆ 0.0       ┆ -23.026 │
+└───────────────────────────┴─────────────┴──────────┴──────────┴───────────┴─────────┘
+
+真實訓練中完全沒被用到的特徵 2 個：['bd_valid', 'log_has_logs']
+
+[> null p50] 保留 39/61 個特徵，重訓中...
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  → Feb-sel log loss 0.07851　停在第 657 輪
+
+[> null p75] 保留 39/61 個特徵，重訓中...
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  → Feb-sel log loss 0.07851　停在第 657 輪
+
+[> null p90] 保留 39/61 個特徵，重訓中...
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  → Feb-sel log loss 0.07851　停在第 657 輪
+
+[> null p95] 保留 39/61 個特徵，重訓中...
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  → Feb-sel log loss 0.07851　停在第 657 輪
+
+[> null p99] 保留 39/61 個特徵，重訓中...
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  → Feb-sel log loss 0.07851　停在第 657 輪
+
+[> null p100] 保留 39/61 個特徵，重訓中...
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  → Feb-sel log loss 0.07851　停在第 657 輪
+
+==============================================================================
+門檻掃描（分數全部來自 Feb-sel，Mar 尚未參與）
+==============================================================================
+shape: (7, 5)
+┌──────────────────┬────────┬──────┬──────────────────┬────────────┐
+│ 門檻             ┆ 特徵數 ┆ 輪數 ┆ Feb-sel log loss ┆ 相對全特徵 │
+│ ---              ┆ ---    ┆ ---  ┆ ---              ┆ ---        │
+│ str              ┆ i64    ┆ i64  ┆ f64              ┆ f64        │
+╞══════════════════╪════════╪══════╪══════════════════╪════════════╡
+│ 全特徵（未篩選） ┆ 61     ┆ 533  ┆ 0.0785           ┆ 0.0        │
+│ > null p50       ┆ 39     ┆ 657  ┆ 0.07851          ┆ 0.00017    │
+│ > null p75       ┆ 39     ┆ 657  ┆ 0.07851          ┆ 0.00017    │
+│ > null p90       ┆ 39     ┆ 657  ┆ 0.07851          ┆ 0.00017    │
+│ > null p95       ┆ 39     ┆ 657  ┆ 0.07851          ┆ 0.00017    │
+│ > null p99       ┆ 39     ┆ 657  ┆ 0.07851          ┆ 0.00017    │
+│ > null p100      ┆ 39     ┆ 657  ┆ 0.07851          ┆ 0.00017    │
+└──────────────────┴────────┴──────┴──────────────────┴────────────┘
+
+凍結門檻：> null p50　39 特徵
+  依據：Feb-sel 0.07851（全特徵 0.07850）
+  砍掉 22 個：['bd_valid', 'gender_code', 'log7_secs', 'log7_completed', 'log14_completed', 'log30_secs', 'log30_plays', 'log30_completed', 'log90_secs', 'log90_completed', 'log90_unq', 'log7_completion', 'log7_active_ratio', 'log7_secs_per_active_day', 'log14_completion', 'log14_secs_per_active_day', 'log30_completion', 'log30_active_ratio', 'log30_secs_per_active_day', 'log90_completion', 'log90_secs_per_active_day', 'log_has_logs']
+
+在 Mar cohort 上評估（門檻已凍結，只算篩選前與篩選後）...
+
+==============================================================================
+篩選前後對照（SPEC §7 M3 交付物）
+==============================================================================
+shape: (2, 8)
+┌──────────────────┬────────┬──────┬──────────────────┬──────────────┬────────────┬──────────┬──────────┐
+│ 階段             ┆ 特徵數 ┆ 輪數 ┆ Feb-sel log loss ┆ Mar log loss ┆ 相對全特徵 ┆ 重複用戶 ┆ 新進用戶 │
+│ ---              ┆ ---    ┆ ---  ┆ ---              ┆ ---          ┆ ---        ┆ ---      ┆ ---      │
+│ str              ┆ i64    ┆ i64  ┆ f64              ┆ f64          ┆ f64        ┆ f64      ┆ f64      │
+╞══════════════════╪════════╪══════╪══════════════════╪══════════════╪════════════╪══════════╪══════════╡
+│ 全特徵（未篩選） ┆ 61     ┆ 533  ┆ 0.0785           ┆ 0.15679      ┆ 0.0        ┆ 0.1184   ┆ 0.53598  │
+│ > null p50       ┆ 39     ┆ 657  ┆ 0.07851          ┆ 0.15879      ┆ 0.01278    ┆ 0.11945  ┆ 0.54739  │
+└──────────────────┴────────┴──────┴──────────────────┴──────────────┴────────────┴──────────┴──────────┘
+
+已寫入 <data_root>\interim\m3_artifacts
+MLflow run f4d8643586d94445b70e230cfab2bb3d
+
+
+--- stderr ---

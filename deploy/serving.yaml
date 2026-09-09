@@ -1,0 +1,30 @@
+# 容器內的服務設定 —— 建置時會被 COPY 成映像檔裡的 configs/serving.yaml。
+#
+# 與 repo 根目錄那份的差別只有一項：msno_lookup 關掉。原因見下。
+
+artifact: catboost_lead7d
+
+# 🚫 **關閉 msno 查詢介面。這是合規要求，不是技術限制。**
+#
+# msno 介面讀的是 interim 的 cohort 快取（3.0 GB），那是從 KKBox 競賽資料算出來
+# 的衍生特徵。把它放進公開的容器映像檔，等於在網路上散布競賽資料的衍生物 ——
+# 與 MODEL_CARD.md 的授權聲明（「資料 © KKBOX Group，依 WSDM Cup 2018 競賽規則
+# 使用，不隨 repo 散布」）直接矛盾。
+#
+# 關掉之後 /predict 只剩 features 介面：呼叫端自己提供 61 欄特徵值。Demo 用的
+# 範例是**合成**的假用戶，依 README 已公開的統計分佈手造，不含任何真實資料列。
+#
+# 服務端會回 503 並說明原因，不是安靜地回空結果 ——
+# 見 tests/test_serving.py::test_msno_interface_says_it_is_unavailable_rather_than_returning_nothing
+msno_lookup:
+  enabled: false
+
+reasons:
+  top_k: 3
+  min_relative: 0.05
+
+# 指紋守衛保持開啟。
+#
+# 這一項在部署環境比在本機更重要：本機發現模型與特徵程式不符，最多是重跑一次；
+# 線上發現，代表你已經用錯誤的語意服務了不知道多久的請求。
+strict_feature_fingerprint: true

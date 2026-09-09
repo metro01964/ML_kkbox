@@ -1,0 +1,86 @@
+name: CI
+
+# 每次 push 與 PR 都跑。
+#
+# ⚠️ 這個 CI 有一個必須明講的限制：**GitHub Actions 上沒有原始資料。**
+# 資料依 Kaggle 競賽規則不進 Git（SPEC §2），所以 43 條測試裡有 36 條會 skip。
+#
+# 問題在於：**一個全部 skip 的測試套件也會顯示綠燈。** 這跟本專案 §4.5 說的
+# 「總分會騙人」是同一類錯誤 —— 一個看起來成功的數字，底下什麼都沒驗證。
+#
+# 因此本 workflow 分兩段跑測試：
+#   1. nodata 段 —— 標了 @NODATA 的純邏輯測試，要求**全過且零 skip**。
+#      這段是 CI 綠燈真正的意義：as-of 守門邏輯、members.csv 靜態掃描、
+#      log loss 與官方 clip 的行為，全部經過驗證。
+#   2. 完整段 —— 跑全套件，抓 import 錯誤與收集階段的問題，並把 skip 清單
+#      印進 log。這段允許 skip，但不允許 fail。
+#
+# 資料相關的斷言（筆數、流失率、cohort 交集、members 覆蓋率）只能在有資料的
+# 機器上驗證，執行方式見 README。
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# 同一分支的新 push 取消還在跑的舊 workflow，省 runner 時間。
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安裝 uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      # .python-version 釘的是 3.12，uv 會自行取得。
+      - name: 建立環境
+        run: make setup
+
+      - name: Lint 與格式檢查
+        run: make lint
+
+      # 這一段是 CI 綠燈的實質內容。
+      - name: 純邏輯測試（要求零 skip）
+        run: |
+          set -o pipefail
+          uv run pytest -m nodata -q --no-header | tee nodata.log
+          if grep -qE '[0-9]+ skipped' nodata.log; then
+            echo "::error::標記 nodata 的測試出現 skip —— 這些測試不該依賴原始資料。"
+            echo "請檢查是否有測試新增了 paths / raw_files / feb_cohort / mar_cohort fixture。"
+            exit 1
+          fi
+          if ! grep -qE '[0-9]+ passed' nodata.log; then
+            echo "::error::nodata 測試一條都沒跑到 —— marker 可能被移除或打錯字。"
+            exit 1
+          fi
+
+      # 允許 skip，不允許 fail。-ra 會把 skip 原因印進 log，
+      # 包含四條等待後續里程碑的紅線測試。
+      - name: 完整測試套件（無資料，多數會 skip）
+        run: uv run pytest -q --no-header
+
+      - name: 摘要
+        if: always()
+        run: |
+          {
+            echo "### 測試範圍說明"
+            echo ""
+            echo "CI runner 上沒有原始資料（依 Kaggle 競賽規則不進 Git），"
+            echo "因此只有標記 \`nodata\` 的純邏輯測試實際執行："
+            echo ""
+            echo "- 紅線 1 · as-of 截斷守門函式（含餵入違規資料確認會 raise）"
+            echo "- 紅線 3 · 程式碼不得引用 \`members.csv\` 的靜態掃描"
+            echo "- 紅線 8 · log loss 的官方 clip 行為與手算對照"
+            echo ""
+            echo "資料契約的 12 條斷言與紅線 7 需要本機資料，執行方式見 README。"
+          } >> "$GITHUB_STEP_SUMMARY"

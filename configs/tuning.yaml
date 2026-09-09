@@ -1,0 +1,97 @@
+# M3 · LightGBM 隨機搜尋的設定。
+#
+# 方法與「為什麼調參不能看 Mar 分數」寫在 src/models/tuning.py 的模組註解。
+
+features:
+  use_logs: true
+
+# ⚠️ 基準參數**不在這個檔案裡**，而是直接讀 configs/model_lgbm.yaml 的
+# [model] 區段。
+#
+# 為什麼：搜尋的對照組必須就是 M1/M2 實際跑的那一組，一個字都不能差。
+# 在這裡複製一份，總有一天兩邊會不同步，而「調參賺了多少」這個數字就
+# 開始騙人 —— 而且不會有任何錯誤訊息。搜尋空間覆寫其中被搜尋的那幾個鍵，
+# objective / seed / deterministic 等其餘設定原樣沿用。
+
+training:
+  num_boost_round: 3000     # 比 M1 的 2000 高，讓小 learning_rate 的組合有空間
+  early_stopping_rounds: 100
+
+# Feb cohort 的三段切分（train / es / sel）。
+#
+# 兩個「看著分數做的決定」必須看不同的資料：es 決定停在第幾輪，
+# sel 決定用哪一組參數。共用一塊會讓 sel 分數偏樂觀。
+split:
+  select_fraction: 0.15          # 先切出 sel
+  early_stopping_fraction: 0.176 # 再從剩下的 85% 切出 es，約占全體 15%
+  split_seed: 42
+
+search:
+  # 31 次訓練（1 次基準 + 30 次抽樣），每次約 10–30 秒。
+  n_trials: 30
+  seed: 2026
+
+# 搜尋空間。
+#
+# loguniform 給效果是**乘性**的參數（學習率、正則化係數）：0.01→0.02 的
+# 差別遠大於 0.09→0.10，線性抽樣會把大半預算浪費在大值那端。
+search_space:
+  learning_rate:
+    type: loguniform
+    low: 0.01
+    high: 0.12
+
+  # 31 是 LightGBM 預設。99 萬列的資料通常撐得住更深的樹，上界開到 255
+  # 讓搜尋自己回答「這題該不該長深」。
+  num_leaves:
+    type: int
+    low: 15
+    high: 255
+
+  # 流失率只有 6.39%，葉子太小會學到雜訊。下界不設得比 20 更低。
+  min_data_in_leaf:
+    type: int
+    low: 20
+    high: 500
+
+  feature_fraction:
+    type: uniform
+    low: 0.5
+    high: 1.0
+
+  bagging_fraction:
+    type: uniform
+    low: 0.5
+    high: 1.0
+
+  lambda_l1:
+    type: loguniform
+    low: 0.001
+    high: 10.0
+
+  lambda_l2:
+    type: loguniform
+    low: 0.001
+    high: 10.0
+
+  # 類別特徵的正則化。last_payment_method_id 有 33 種取值。
+  cat_smooth:
+    type: int
+    low: 1
+    high: 200
+
+  min_data_per_group:
+    type: int
+    low: 20
+    high: 500
+
+# bagging_freq 不參與搜尋：它只在 bagging_fraction < 1 時有作用，兩者一起搜
+# 會產生大量「設了 bagging_fraction 但 freq=0 所以沒生效」的無效組合，白白
+# 浪費預算。model_lgbm.yaml 已經是 1（每輪重抽），這裡不覆寫。
+
+tracking:
+  enabled: true
+  backend: sqlite:///mlflow.db
+  artifact_dir: mlartifacts
+  experiment: kkbox-churn
+  run_prefix: m3_tune

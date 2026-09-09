@@ -1,0 +1,56 @@
+"""資料載入與 as-of 切分。
+
+對應 SPEC §7 的 `src/data/`「下載、驗證、as-of 切分」。
+"""
+
+from src.data.cohort import (
+    APR_FIXED,
+    COHORTS,
+    EXPECTED_COLUMNS,
+    FEB,
+    FEB_FIXED,
+    FEB_T7,
+    LAST_TX_COLUMNS,
+    MAR,
+    MAR_FIXED,
+    MAR_T7,
+    CohortSpec,
+    aggregate_asof,
+    assert_asof_respected,
+    assert_cutoffs_within_window,
+    assert_data_covers_cutoffs,
+    assert_labels_are_real,
+    assert_rows_reproducible,
+    build_cohort,
+    cutoff_definition,
+    cutoff_window,
+    expected_columns,
+    observed_transaction_end,
+    scan_transactions,
+)
+
+__all__ = [
+    "APR_FIXED",
+    "COHORTS",
+    "EXPECTED_COLUMNS",
+    "FEB",
+    "FEB_FIXED",
+    "FEB_T7",
+    "LAST_TX_COLUMNS",
+    "MAR",
+    "MAR_FIXED",
+    "MAR_T7",
+    "CohortSpec",
+    "aggregate_asof",
+    "assert_asof_respected",
+    "assert_cutoffs_within_window",
+    "assert_data_covers_cutoffs",
+    "assert_labels_are_real",
+    "assert_rows_reproducible",
+    "build_cohort",
+    "cutoff_definition",
+    "cutoff_window",
+    "expected_columns",
+    "observed_transaction_end",
+    "scan_transactions",
+]

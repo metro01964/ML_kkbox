@@ -1,0 +1,114 @@
+$ python scripts/train.py
+
+載入 cohort（收聽特徵：啟用）...
+  收聽特徵覆蓋 feb 81.56% · mar 82.01%
+  訓練 feb 992,912 列 × 61 特徵，流失率 6.3915%
+  驗證 mar 970,959 列 × 61 特徵，流失率 8.9941%
+  Feb 內部切分：訓練 794,329 · early stopping 198,583
+
+訓練中...
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+Training until validation scores don't improve for 100 rounds
+[100]	feb_inner's binary_logloss: 0.0803968
+[200]	feb_inner's binary_logloss: 0.0793057
+[300]	feb_inner's binary_logloss: 0.0790344
+[400]	feb_inner's binary_logloss: 0.078933
+[500]	feb_inner's binary_logloss: 0.078914
+Early stopping, best iteration is:
+[498]	feb_inner's binary_logloss: 0.0789081
+  最佳輪數 498
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+
+5-fold 變異數估計（固定 498 輪）...
+  fold 1/5  log loss 0.08357
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  fold 2/5  log loss 0.08355
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  fold 3/5  log loss 0.08297
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  fold 4/5  log loss 0.08338
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+[LightGBM] [Warning] Met negative value in categorical features, will convert it to NaN
+  fold 5/5  log loss 0.08370
+
+======================================================================
+M1 · LightGBM baseline 結果
+======================================================================
+最佳輪數              498
+常數基準 log loss     0.30746   ← SPEC §3.3 門檻
+模型 log loss         0.15705
+改善                  48.92%
+驗收                  ✅ 通過
+
+--- 分群回報（SPEC §4.5 要求）---
+shape: (3, 6)
+┌──────────┬────────┬──────────┬────────────┬──────────────┬──────────┐
+│ 分群     ┆ 人數   ┆ 佔比     ┆ 實際流失率 ┆ 平均預測機率 ┆ log_loss │
+│ ---      ┆ ---    ┆ ---      ┆ ---        ┆ ---          ┆ ---      │
+│ str      ┆ i64    ┆ f64      ┆ f64        ┆ f64          ┆ f64      │
+╞══════════╪════════╪══════════╪════════════╪══════════════╪══════════╡
+│ 新進用戶 ┆ 89266  ┆ 0.091936 ┆ 0.398371   ┆ 0.272828     ┆ 0.537465 │
+│ 重複用戶 ┆ 881693 ┆ 0.908064 ┆ 0.058714   ┆ 0.044336     ┆ 0.11854  │
+│ 全體     ┆ 970959 ┆ 1.0      ┆ 0.089941   ┆ 0.065342     ┆ 0.157054 │
+└──────────┴────────┴──────────┴────────────┴──────────────┴──────────┘
+
+--- 特徵重要度 Top 12（依 gain）---
+shape: (12, 4)
+┌────────────────────────┬───────────────┬───────┬────────────┐
+│ feature                ┆ gain          ┆ split ┆ gain_share │
+│ ---                    ┆ ---           ┆ ---   ┆ ---        │
+│ str                    ┆ f64           ┆ i32   ┆ f64        │
+╞════════════════════════╪═══════════════╪═══════╪════════════╡
+│ last_is_cancel         ┆ 742884.134655 ┆ 257   ┆ 0.338609   │
+│ last_is_auto_renew     ┆ 522416.176445 ┆ 110   ┆ 0.238119   │
+│ days_since_last_tx     ┆ 298022.480147 ┆ 944   ┆ 0.13584    │
+│ last_payment_method_id ┆ 198127.803973 ┆ 703   ┆ 0.090307   │
+│ log90_active_days      ┆ 61680.7467    ┆ 367   ┆ 0.028114   │
+│ cancel_rate            ┆ 52107.146703  ┆ 340   ┆ 0.023751   │
+│ last_paid              ┆ 46480.420214  ┆ 335   ┆ 0.021186   │
+│ log_min_days_before    ┆ 26128.471926  ┆ 254   ┆ 0.011909   │
+│ n_tx                   ┆ 20623.552005  ┆ 507   ┆ 0.0094     │
+│ mean_paid              ┆ 16797.502234  ┆ 540   ┆ 0.007656   │
+│ log_trend_7_30         ┆ 16174.802634  ┆ 326   ┆ 0.007373   │
+│ log7_plays             ┆ 14802.392154  ┆ 203   ┆ 0.006747   │
+└────────────────────────┴───────────────┴───────┴────────────┘
+
+完全沒被用到的特徵 1 個：['log_has_logs']
+
+--- Feb 內部 5-fold（SPEC §7 要求回報標準差）---
+  fold 1  0.08357
+  fold 2  0.08355
+  fold 3  0.08297
+  fold 4  0.08338
+  fold 5  0.08370
+  平均 0.08344 ± 0.00028
+
+  時間外（Mar）0.15705  −  fold 內（Feb）0.08344  =  +0.07362
+  差距是標準差的 260 倍。
+
+  這個差距不是 bug，是概念漂移的量化。fold 內的訓練與驗證同屬 2017-02
+  到期族群（流失率 6.39%），Mar cohort 是 8.99% 的另一個分布。
+  SPEC §4.2：「該差距本身就是要寫進報告的發現，不是要調掉的問題。」
+  ⚠️ 只報 fold 內分數會讓模型看起來好一倍 —— 那是最常見的自欺方式。
+
+MLflow run d38c0609b2154004b88f4182efe4f4af　（用 uv run mlflow ui 檢視）
+
+
+--- stderr ---

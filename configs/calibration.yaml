@@ -1,0 +1,30 @@
+# M4 · 機率校準的設定。
+#
+# 方法與「校準器要 fit 在哪一塊」寫在 scripts/calibration_report.py 的模組註解。
+
+features:
+  use_logs: true
+
+# ⚠️ **這份切分刻意與 configs/tuning.yaml、configs/feature_selection.yaml 不同。**
+#
+# 原本三者共用同一組 seed，於是同一批 15% 的用戶依序被用來：
+#
+#     1. 挑 null importance 的門檻（M3）
+#     2. 挑超參數（M3）
+#     3. fit 機率校準器（M4）
+#
+# 就模型權重而言「校準器 fit 在模型沒看過的那一塊」仍然成立，但那一塊作為
+# 「乾淨保留集」的身分已經被消耗過兩次 —— 而 §7.6 剛示範過同一類錯誤的代價。
+#
+# 換一個 seed 之後，校準集與 M3 的選擇集期望重疊約 15%（而非 100%）。
+# 要完全不重疊需要四段切分（train / es / sel / cal），但那會再縮小訓練集、
+# 讓 M1–M4 全部數字重測一次。**由於 M3 的兩個選擇最後都沒有被採用**
+# （見 §7.4），sel 對現行模型的實際影響為零，因此換 seed 是相稱的處置。
+# M6 若要重訓最終模型，應改採四段切分。
+split:
+  select_fraction: 0.15
+  early_stopping_fraction: 0.176
+  split_seed: 20260809    # 與 tuning.yaml 的 42 刻意不同
+
+tracking:
+  enabled: false          # 診斷階段不記 MLflow，等校準器實作完再開

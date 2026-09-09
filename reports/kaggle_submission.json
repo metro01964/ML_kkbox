@@ -1,0 +1,58 @@
+{
+  "generated_at": "2026-08-10T23:25:00+08:00",
+  "git_sha": "3c4846b26a304059e9bfd046b28667713fd7604b",
+  "git_dirty": true,
+  "artifact": {
+    "name": "catboost_fixed",
+    "model_sha256_16": "2632a5b613b8add8",
+    "cutoff_definition": "fixed_score_date_20170131",
+    "trained_on": "feb_fixed",
+    "n_features": 62
+  },
+  "pre_registered_expectation": {
+    "local_proxy": "feb_fixed → mar_fixed",
+    "log_loss": 0.17342,
+    "constant_baseline": 0.27329,
+    "effective_lead_days": {
+      "min": 1,
+      "median": 17.0,
+      "max": 31,
+      "negative": 0
+    },
+    "note": "Apr 提交的分數應與這個量級相當；官方私榜（第 20 名 0.10834）算在同一個 Apr cohort 上，所以與它的比較是合法的。"
+  },
+  "cohort": {
+    "name": "apr_fixed",
+    "score_date": 20170331,
+    "n_submission_rows": 907471,
+    "n_with_features": 907470,
+    "n_fallback": 1,
+    "fallback_value": 0.058841,
+    "labels_available": false
+  },
+  "predictions": {
+    "mean": 0.051885,
+    "median": 0.012882,
+    "p99": 0.591095,
+    "max": 0.996105,
+    "min": 0.000211,
+    "above_p_star": 0.024616,
+    "p_star": 0.4534
+  },
+  "score_drift_vs_local_reference": {
+    "reference": "mar_fixed",
+    "score_psi": 0.005905,
+    "band": "穩定"
+  },
+  "submission": {
+    "csv": "reports/kaggle/submission_catboost_fixed.csv",
+    "sha256": "db0f18b322896a9e4ae4207d9d1f19aaaa4a65cd20d80b16cda37d6faaf708b2",
+    "csv_in_git": false
+  },
+  "how_to_read": [
+    "本地**算不出**這份預測的分數：Apr cohort 的標籤是 Kaggle 測試集，`sample_submission_v2.csv` 的 is_churn 全是 0 佔位值（已填成 null）。",
+    "所以 `pre_registered_expectation` 是提交前寫下的預期，來自結構相同的本地對照（feb_fixed → mar_fixed）。",
+    "分數 PSI 是「分布像不像」，不是分數。它正常不代表這份提交會準 ——§7.17 實測 PSI 對基準率漂移完全看不到。",
+    "提交是使用者自己的動作。分數回來之後要寫進 README 的成果表與 §3.3，**無論結果如何** —— 那是這個門檻的意義。"
+  ]
+}

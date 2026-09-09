@@ -1,0 +1,46 @@
+# 建置情境（build context）會整包送給 builder，所以這裡排除的東西直接決定
+# 上傳量與建置時間。平台端的建置尤其有感 —— 那是走網路的。
+#
+# 注意這份清單與 .gitignore 的用途不同：.gitignore 管「什麼不進版控」，
+# 這份管「什麼不進映像檔」。已經在 git 裡的東西（例如 reports/figures/ 的
+# 16 張圖）照樣需要在這裡排除，因為推論服務用不到。
+
+.git/
+.github/
+.venv/
+.pytest_cache/
+.ruff_cache/
+__pycache__/
+*.py[cod]
+
+# 資料與模型訓練產物
+data/
+models/
+mlruns/
+mlflow.db
+mlartifacts/
+catboost_info/
+*.csv
+*.7z
+*.parquet
+
+# 推論用不到的層
+tests/
+scripts/
+notebooks/
+reports/
+docs/
+
+# 文件（映像檔裡不需要，但 HF Spaces 的 README 是例外 —— 它靠 README 的
+# front-matter 設定 Space，那份在 deploy/hf/ 底下另外維護）
+*.md
+!deploy/hf/README.md
+
+# 機器專屬設定：容器用 deploy/serving.yaml 與 DATA_ROOT 環境變數
+configs/paths.yaml
+
+# 編輯器與 OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

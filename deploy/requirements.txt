@@ -1,0 +1,55 @@
+# 推論映像檔的依賴 —— **刻意不是** pyproject.toml 的 dependencies。
+#
+# 為什麼要另一份清單：pyproject 的 dependencies 是「裝了就全裝」，沒辦法只取
+# 子集。matplotlib、kaggle、mlflow 在 /predict 的路徑上一行都沒跑到，裝進映像檔
+# 只會讓建置變慢、映像檔變大。
+#
+# 版本鎖死在本機驗證過的那一組（2026-08-12），不用範圍。這份清單沒有 uv.lock
+# 幫忙鎖，範圍會讓「本機好好的、線上卻壞了」變成可能。
+#
+# ⚠️ 改 pyproject 的版本時，這裡要跟著改。
+#
+# ---------------------------------------------------------------------------
+# 這份清單是**量出來的，不是讀原始碼推出來的**
+# ---------------------------------------------------------------------------
+#
+# 第一版我用 grep 找 src/serving/*.py 的 import，結論是只需要 fastapi、numpy、
+# polars、pydantic、yaml。實際跑起來炸了 —— src/features/__init__.py 會匯入
+# encoding.py，而它在模組層級 import sklearn.model_selection。grep 看不到經由
+# 套件 __init__.py 傳遞的相依。
+#
+# 正確的做法是問直譯器：
+#
+#   before = set(sys.modules); import src.serving.app; after = set(sys.modules)
+#
+# 這樣量出來多了 sklearn、lightgbm、pyarrow 三個。它們來自 calibrator.py、
+# encoding.py、train.py 等六個檔案的模組層級 import，全都是訓練用的東西 ——
+# 理論上可以像 candidates.py 那樣改成延遲 import，把映像檔再縮小一些。
+#
+# 沒有這樣做的理由：實測服務載完模型 + 跑完一次推論的 RSS 是 217 MB，而目標
+# 平台（Koyeb / Render 免費方案）給 512 MB。餘裕充足，那個跨六個檔案的重構
+# 就是不必要的風險。**先量再決定，不要為了想像中的限制去改已驗證的程式碼。**
+
+fastapi==0.141.1
+uvicorn==0.52.1
+pydantic==2.13.4
+polars==1.43.2
+numpy==2.5.1
+pyyaml==6.0.3
+
+# 經由 src/features/__init__.py 與 src/evaluation/ 的模組層級 import 進來。
+# 推論路徑不呼叫它們的功能，但 import 鏈需要它們存在。
+scikit-learn==1.9.0
+lightgbm==4.7.0
+pyarrow==25.0.0
+
+# catboost 的執行期依賴。
+#
+# catboost 自己宣告的依賴包含 matplotlib、plotly、graphviz —— 那三個只服務它的
+# 繪圖 API（plot_tree 之類），載模型與 TreeSHAP 用不到。實測 `--no-deps` 安裝後
+# import 與 load_model 都正常，省下約 200 MB。
+#
+# 所以 Dockerfile 分兩步裝：這份清單先裝好下面這些，catboost 再用 --no-deps 裝。
+pandas==2.3.3
+scipy==1.18.0
+six==1.17.0

@@ -1,0 +1,67 @@
+# M3 · 配對 multi-seed 實驗：重新量測雜訊尺度。
+#
+# §7.6 的判定一直除以 NOISE_SIGMA = 0.00048，而那個值是在 §7.11 的「同日交易
+# 定序」修正**之前**量的 —— 它裡面混著一部分本次已經修掉的不決定性。在新的
+# σ 量出來之前，任何「幾 σ」的說法都不算數。
+
+features:
+  use_logs: true
+
+# ⚠️ **seeds 在看到任何結果之前就固定下來，寫在這裡。**
+#
+# 這一條是實驗紀律不是形式：如果先跑再決定跑幾個 seed，就可以在結果剛好
+# 顯著的時候收手（optional stopping），那個 p 值與 CI 都會失效。
+#
+# 42 排第一是為了與正式流程的設定對得上（configs/model_lgbm.yaml 的
+# inner_split_seed 就是 42），其餘七個是任意但事先寫死的值。
+seeds: [42, 137, 271, 314, 577, 811, 1009, 1234]
+
+# 三家共用的訓練協定。**只有 inner_split_seed 會隨 seeds 變動**，
+# 其餘（特徵集、超參數、各套件自己的 seed）全部固定 —— 否則量到的就不是
+# 「換一批 early stopping 資料」的效應，而是好幾件事混在一起。
+training:
+  num_boost_round: 2000
+  early_stopping_rounds: 100
+  inner_valid_fraction: 0.2
+
+models:
+  lightgbm:
+    objective: binary
+    metric: binary_logloss
+    learning_rate: 0.05
+    num_leaves: 31
+    min_data_in_leaf: 100
+    feature_fraction: 0.8
+    bagging_fraction: 0.8
+    bagging_freq: 1
+    lambda_l2: 1.0
+    cat_smooth: 10
+    min_data_per_group: 100
+    num_threads: 0
+    verbosity: -1
+    seed: 42            # 模型自己的 seed 固定，只有切分在變
+    deterministic: true
+
+  xgboost:
+    objective: binary:logistic
+    eval_metric: logloss
+    tree_method: hist
+    max_depth: 6
+    learning_rate: 0.05
+    min_child_weight: 6.0
+    subsample: 0.8
+    colsample_bytree: 0.8
+    reg_lambda: 1.0
+    max_cat_to_onehot: 8
+    nthread: 0
+    seed: 42
+
+  catboost:
+    loss_function: Logloss
+    eval_metric: Logloss
+    learning_rate: 0.05
+    depth: 6
+    l2_leaf_reg: 3.0
+    random_seed: 42
+    one_hot_max_size: 8
+    allow_writing_files: false

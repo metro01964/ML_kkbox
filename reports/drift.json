@@ -1,0 +1,322 @@
+{
+  "generated_at": "2026-08-10T23:17:27+08:00",
+  "git_sha": "3c4846b26a304059e9bfd046b28667713fd7604b",
+  "git_dirty": true,
+  "artifact": {
+    "name": "catboost_lead7d",
+    "model_sha256_16": "8212de13d595ba09",
+    "cutoff_definition": "expire_date_minus_7d",
+    "lead_days": 7,
+    "deployable": true
+  },
+  "cohorts": {
+    "reference": "feb_t7",
+    "current": "mar_t7",
+    "n_reference": 991774,
+    "n_current": 969386
+  },
+  "settings": {
+    "bins": 10,
+    "epsilon": 1e-06,
+    "noise_rounds": 5,
+    "conventional_bands": [
+      0.1,
+      0.25
+    ],
+    "log_feature_columns": 38
+  },
+  "noise_floor": {
+    "p95_all": 7.4e-05,
+    "max": 0.000169,
+    "worst_feature": "last_payment_method_id",
+    "how": "同一個 cohort 隨機切兩半算 PSI，重複 N 輪 —— 完全沒有漂移時的基準"
+  },
+  "features": {
+    "bands": {
+      "穩定": 59,
+      "中度": 0,
+      "顯著": 2
+    },
+    "above_noise_floor": 58,
+    "epsilon_floored": [
+      "last_payment_method_id"
+    ],
+    "top": [
+      {
+        "feature": "days_since_last_tx",
+        "psi": 1.270255,
+        "band": "顯著",
+        "epsilon_floored": false,
+        "kind": "quantile",
+        "reference_missing": 0.0,
+        "current_missing": 0.0,
+        "missing_delta": 0.0,
+        "top_bin": "(21, 22]"
+      },
+      {
+        "feature": "tenure_days",
+        "psi": 0.556548,
+        "band": "顯著",
+        "epsilon_floored": false,
+        "kind": "quantile",
+        "reference_missing": 0.0,
+        "current_missing": 0.0,
+        "missing_delta": 0.0,
+        "top_bin": "(730, 753]"
+      },
+      {
+        "feature": "log_trend_7_30",
+        "psi": 0.009327,
+        "band": "穩定",
+        "epsilon_floored": false,
+        "kind": "quantile",
+        "reference_missing": 0.218865,
+        "current_missing": 0.216382,
+        "missing_delta": -0.002483,
+        "top_bin": "(0, 0.297743]"
+      },
+      {
+        "feature": "log_trend_active_7_30",
+        "psi": 0.006843,
+        "band": "穩定",
+        "epsilon_floored": false,
+        "kind": "quantile",
+        "reference_missing": 0.218865,
+        "current_missing": 0.216382,
+        "missing_delta": -0.002483,
+        "top_bin": "(0, 0.612245]"
+      },
+      {
+        "feature": "last_price",
+        "psi": 0.005078,
+        "band": "穩定",
+        "epsilon_floored": false,
+        "kind": "quantile",
+        "reference_missing": 0.009347,
+        "current_missing": 0.009226,
+        "missing_delta": -0.00012,
+        "top_bin": "(100, 149]"
+      },
+      {
+        "feature": "cancel_rate",
+        "psi": 0.004948,
+        "band": "穩定",
+        "epsilon_floored": false,
+        "kind": "quantile",
+        "reference_missing": 0.0,
+        "current_missing": 0.0,
+        "missing_delta": 0.0,
+        "top_bin": "(0.037037, 0.0526316]"
+      },
+      {
+        "feature": "n_tx",
+        "psi": 0.004946,
+        "band": "穩定",
+        "epsilon_floored": false,
+        "kind": "quantile",
+        "reference_missing": 0.0,
+        "current_missing": 0.0,
+        "missing_delta": 0.0,
+        "top_bin": "(18, 21]"
+      },
+      {
+        "feature": "log14_active_days",
+        "psi": 0.004389,
+        "band": "穩定",
+        "epsilon_floored": false,
+        "kind": "quantile",
+        "reference_missing": 0.184218,
+        "current_missing": 0.17957,
+        "missing_delta": -0.004648,
+        "top_bin": "(14, inf)"
+      },
+      {
+        "feature": "log14_active_ratio",
+        "psi": 0.004389,
+        "band": "穩定",
+        "epsilon_floored": false,
+        "kind": "quantile",
+        "reference_missing": 0.184218,
+        "current_missing": 0.17957,
+        "missing_delta": -0.004648,
+        "top_bin": "(1, inf)"
+      },
+      {
+        "feature": "days_since_registration",
+        "psi": 0.00434,
+        "band": "穩定",
+        "epsilon_floored": false,
+        "kind": "quantile",
+        "reference_missing": 0.11645,
+        "current_missing": 0.113162,
+        "missing_delta": -0.003288,
+        "top_bin": "(455, 604]"
+      },
+      {
+        "feature": "log7_active_days",
+        "psi": 0.003126,
+        "band": "穩定",
+        "epsilon_floored": false,
+        "kind": "discrete",
+        "reference_missing": 0.184218,
+        "current_missing": 0.17957,
+        "missing_delta": -0.004648,
+        "top_bin": "7"
+      },
+      {
+        "feature": "log7_active_ratio",
+        "psi": 0.003126,
+        "band": "穩定",
+        "epsilon_floored": false,
+        "kind": "discrete",
+        "reference_missing": 0.184218,
+        "current_missing": 0.17957,
+        "missing_delta": -0.004648,
+        "top_bin": "1"
+      },
+      {
+        "feature": "last_payment_method_id",
+        "psi": 0.002842,
+        "band": "穩定",
+        "epsilon_floored": true,
+        "kind": "category",
+        "reference_missing": 0.0,
+        "current_missing": 0.0,
+        "missing_delta": 0.0,
+        "top_bin": "35"
+      },
+      {
+        "feature": "log_min_days_before",
+        "psi": 0.001863,
+        "band": "穩定",
+        "epsilon_floored": false,
+        "kind": "quantile",
+        "reference_missing": 0.184218,
+        "current_missing": 0.17957,
+        "missing_delta": -0.004648,
+        "top_bin": "(0, 1]"
+      },
+      {
+        "feature": "log_trend_30_90",
+        "psi": 0.001668,
+        "band": "穩定",
+        "epsilon_floored": false,
+        "kind": "quantile",
+        "reference_missing": 0.184218,
+        "current_missing": 0.17957,
+        "missing_delta": -0.004648,
+        "top_bin": "(-inf, 0.348269]"
+      }
+    ]
+  },
+  "score": {
+    "psi": 0.025428,
+    "band": "穩定",
+    "epsilon_floored": false,
+    "reference": "feb inner early-stopping split（未被擬合，但停點看過它）",
+    "in_sample_reference_psi": 0.023643,
+    "deciles": [
+      {
+        "feature": "score",
+        "bin": "(-inf, 0.00203707]",
+        "reference": 0.100003,
+        "current": 0.07256,
+        "contribution": 0.008803
+      },
+      {
+        "feature": "score",
+        "bin": "(0.00203707, 0.00281777]",
+        "reference": 0.097704,
+        "current": 0.082529,
+        "contribution": 0.002561
+      },
+      {
+        "feature": "score",
+        "bin": "(0.00281777, 0.00343954]",
+        "reference": 0.100814,
+        "current": 0.10531,
+        "contribution": 0.000196
+      },
+      {
+        "feature": "score",
+        "bin": "(0.00343954, 0.00453798]",
+        "reference": 0.10148,
+        "current": 0.114951,
+        "contribution": 0.001679
+      },
+      {
+        "feature": "score",
+        "bin": "(0.00453798, 0.00684462]",
+        "reference": 0.099997,
+        "current": 0.121706,
+        "contribution": 0.004265
+      },
+      {
+        "feature": "score",
+        "bin": "(0.00684462, 0.00976984]",
+        "reference": 0.100003,
+        "current": 0.083365,
+        "contribution": 0.003027
+      },
+      {
+        "feature": "score",
+        "bin": "(0.00976984, 0.0159142]",
+        "reference": 0.099997,
+        "current": 0.11079,
+        "contribution": 0.001106
+      },
+      {
+        "feature": "score",
+        "bin": "(0.0159142, 0.0348763]",
+        "reference": 0.100003,
+        "current": 0.116798,
+        "contribution": 0.002607
+      },
+      {
+        "feature": "score",
+        "bin": "(0.0348763, 0.17814]",
+        "reference": 0.099997,
+        "current": 0.089656,
+        "contribution": 0.001129
+      },
+      {
+        "feature": "score",
+        "bin": "(0.17814, inf)",
+        "reference": 0.100003,
+        "current": 0.102336,
+        "contribution": 5.4e-05
+      },
+      {
+        "feature": "score",
+        "bin": "__missing__",
+        "reference": 0.0,
+        "current": 0.0,
+        "contribution": 0.0
+      }
+    ]
+  },
+  "labels": {
+    "reference_churn": 0.063566,
+    "current_churn": 0.088947,
+    "absolute_change": 0.025381,
+    "relative_change": 0.399289,
+    "current_mean_prediction": 0.063313,
+    "current_relative_bias": -0.288193
+  },
+  "targeting": {
+    "p_star": 0.4836,
+    "reference_rate": 0.038855,
+    "current_rate": 0.038348,
+    "relative_change": -0.013038
+  },
+  "figures": [
+    "reports/figures/16_drift_psi.png"
+  ],
+  "how_to_read": [
+    "0.10 / 0.25 是慣例，不是統計檢定 —— 沒有分布假設也沒有樣本數修正。這個樣本數下的無漂移基準是 noise_floor.p95_all = 0.00007，所以「幾倍雜訊地板」比「落在哪一帶」更能判讀。",
+    "epsilon_floored = true 的欄位有單邊空箱（例如出現了訓練時沒見過的類別、或缺失率從 0 變成正的）。那時 PSI 的大小由 epsilon = 1e-06 決定，只能讀成「出現了參考期沒有的東西」，不能讀成漂移的量。",
+    "分數 PSI 的參考期是 Feb 內部的 early stopping 切分，不是訓練集的樣本內預測 ——用樣本內會得到 0.0236，那個差是「樣本內 vs 樣本外」不是漂移。",
+    "⚠️ PSI 看不到基準率漂移。實際流失率動了+39.9%，而特徵與分數的 PSI 沒有反映那個量級 ——這條限制要進 MODEL_CARD：監控回報「穩定」不等於模型還準。",
+    "標籤漂移這一節在部署時拿不到（標籤要等到期後 30 天）。它在這裡是因為本專案有 Mar 的標籤 —— 那是一次可以量出「監控會漏掉什麼」的機會。"
+  ]
+}

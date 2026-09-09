@@ -1,0 +1,71 @@
+# M3 · Null importance 特徵篩選的設定。
+#
+# 方法與三個常見錯誤寫在 src/models/selection.py 的模組註解裡，這裡只放參數。
+
+features:
+  # 篩選必須在**完整**特徵集上做，否則篩掉的東西是被前一次篩選決定的。
+  use_logs: true
+
+# 沿用 configs/model_lgbm.yaml 的同一組超參數。
+#
+# 為什麼不另外調：篩選要回答的是「哪些特徵是雜訊」，若同時換超參數，
+# 分數的變化就分不清是特徵少了還是參數變了。§10 Q3 的「每一步只改一件事」。
+model:
+  objective: binary
+  metric: binary_logloss
+  learning_rate: 0.05
+  num_leaves: 31
+  min_data_in_leaf: 100
+  feature_fraction: 0.8
+  bagging_fraction: 0.8
+  bagging_freq: 1
+  lambda_l2: 1.0
+  cat_smooth: 10
+  min_data_per_group: 100
+  num_threads: 0
+  verbosity: -1
+  seed: 42
+  deterministic: true
+
+training:
+  num_boost_round: 2000
+  early_stopping_rounds: 100
+
+# Feb cohort 的三段切分（train / es / sel）。與 configs/tuning.yaml 相同的
+# 數值與 seed —— 兩個實驗因此看到的是**同一批列**，分數可以互相對照。
+#
+# 為什麼篩選也需要三塊：選門檻是第二個「看著分數做的決定」（第一個是
+# 停在第幾輪）。兩個決定看同一塊資料，那塊資料就被最佳化了兩次。
+# 門檻凍結之後才動 Mar，且只算「篩選前 / 篩選後」兩個數字。
+split:
+  select_fraction: 0.15
+  early_stopping_fraction: 0.176
+  split_seed: 42
+
+null_importance:
+  # 打亂標籤重訓幾次。
+  #
+  # 20 次可以穩定估到第 95 百分位。要用第 99 百分位以上的門檻，實質上是被
+  # 最大值決定的（20 次的第 99 百分位就是最大值附近），那時應該提高到 50
+  # 以上 —— 但每一次都是一輪完整訓練，成本是線性的，先用 20 看形狀。
+  n_runs: 20
+
+  # 打亂標籤的種子。模型自己的 seed **不隨執行變動**（見模組註解）。
+  seed: 42
+
+  # 固定輪數。null 執行不能 early stopping（標籤是亂的，第一輪就會停），
+  # 所以要給一個固定預算。
+  #   null → 用真實訓練找到的 best_iteration
+  #   數字 → 直接用這個值（除錯時想跑快一點就填小一點）
+  num_boost_round: null
+
+  # 篩選門檻的掃描範圍：保留 actual gain 超過自身 null 分布第 p 百分位的特徵。
+  # 掃描而非只挑一個，是因為「該砍多少」沒有先驗答案；曲線本身就是結果。
+  percentiles: [50, 75, 90, 95, 99, 100]
+
+tracking:
+  enabled: true
+  backend: sqlite:///mlflow.db
+  artifact_dir: mlartifacts
+  experiment: kkbox-churn
+  run_prefix: m3_select

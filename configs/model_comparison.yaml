@@ -1,0 +1,116 @@
+# M3 · 三方比較的設定（SPEC §7 M3：LGBM / XGB / CatBoost 三方比較）。
+#
+# SPEC §8：「設定管理 · YAML in configs/ · 禁止硬編碼超參數」。
+#
+# ============================================================================
+# 「公平比較」在這裡的定義
+# ============================================================================
+#
+# **完全對齊的部分**（不對齊就無法把分數差異歸因到模型）：
+#
+#   - 特徵矩陣：同一份 61 欄，由 load_cohort_features() 建一次共用
+#   - 切分：Feb 訓練 → Mar 驗證，Mar 全程不參與訓練
+#   - early stopping：同一塊 Feb 內部 20%、同一個 seed、同樣 100 輪耐心
+#   - 上限輪數、學習率、抽樣比例、隨機種子
+#   - 評估：同一個 src.evaluation.log_loss（含紅線 8 的 clip）
+#
+# **刻意不對齊的部分**：各套件的**樹結構**。
+#
+#   LightGBM 是 leaf-wise（num_leaves 31），XGBoost 預設 depth-wise，
+#   CatBoost 用對稱樹（oblivious trees）。這三種長樹的方式在數學上不等價，
+#   「同一組超參數」根本不存在 —— 硬把 CatBoost 掰成 leaf-wise，比的就變成
+#   「誰比較能忍受不適合自己的設定」。
+#
+#   因此各家在結構相關的參數上使用**各自的合理預設**，只對齊上面那些真正
+#   跨套件同義的旋鈕。這一點必須寫進報告：本表比的是「三個套件在各自預設
+#   體質下、拿到相同資料時的表現」，不是「同一個模型的三種實作」。
+#
+# **三家都未調參。** 調參會讓比較變成「誰被調得比較久」。要調就三家一起調，
+# 那是另一個實驗。
+
+features:
+  # 與 M2 一致（61 個特徵）。改這一行三家會同時改，不會只動到其中一家。
+  use_logs: true
+
+# 三家共用的訓練協定。
+training:
+  num_boost_round: 2000
+  early_stopping_rounds: 100
+
+  # Early stopping 用的驗證集從 Feb cohort 內部切出來，理由同 model_lgbm.yaml：
+  # 用 Mar 決定停在第幾輪，回報的 Mar 分數就已經被自己影響過。
+  # seed 與 M1 相同，三家拿到的是**同一批列**。
+  inner_valid_fraction: 0.2
+  inner_split_seed: 42
+
+models:
+  # 與 configs/model_lgbm.yaml 完全相同的一組，作為比較的參照點 ——
+  # 這一列的分數應該重現 M2 的 0.15821。對不上就代表比較框架本身有問題。
+  lightgbm:
+    objective: binary
+    metric: binary_logloss
+    learning_rate: 0.05
+    num_leaves: 31
+    min_data_in_leaf: 100
+    feature_fraction: 0.8
+    bagging_fraction: 0.8
+    bagging_freq: 1
+    lambda_l2: 1.0
+    cat_smooth: 10
+    min_data_per_group: 100
+    num_threads: 0
+    verbosity: -1
+    seed: 42
+    deterministic: true
+
+  xgboost:
+    objective: binary:logistic
+    eval_metric: logloss
+    # hist 是與 LightGBM 同源的直方圖演算法，也是 enable_categorical 的前提。
+    tree_method: hist
+    max_depth: 6            # XGBoost 的預設成長方式，不強行對齊 num_leaves
+    learning_rate: 0.05
+    # 最小葉子權重。XGBoost 算的是 hessian 總和而非列數，在流失率 6.4% 下
+    # 每列的 hessian 約 p(1-p) ≈ 0.06，所以 6.0 ≈ LightGBM 的 100 列。
+    # 這是近似不是等價，寫在這裡是為了讓「為什麼是 6」有跡可循。
+    min_child_weight: 6.0
+    subsample: 0.8
+    colsample_bytree: 0.8
+    reg_lambda: 1.0
+    # 高基數類別（payment_method_id 有 33 種）超過這個門檻就改用最佳分割
+    # 而非 one-hot，對應 LightGBM 的原生類別處理。
+    max_cat_to_onehot: 8
+    nthread: 0
+    seed: 42
+
+  catboost:
+    loss_function: Logloss
+    eval_metric: Logloss
+    learning_rate: 0.05
+    depth: 6                # 對稱樹的深度，CatBoost 預設值
+    l2_leaf_reg: 3.0
+    random_seed: 42
+    # 類別特徵用 ordered target statistics（見 candidates.fit_catboost 的
+    # docstring）。這是 CatBoost 與另外兩家最實質的差別，也是 SPEC §8 選它
+    # 進來的理由。
+    one_hot_max_size: 8
+    # 對稱樹本身已有很強的正則化效果，再加 bagging 會拖慢且效果重複，
+    # 所以此處不設 subsample —— 這正是「刻意不對齊」的一例。
+    allow_writing_files: false
+
+# 是否額外評估「三家預測值取平均」。
+#
+# 不是為了刷分：三個模型平均之後如果明顯優於任何單一模型，代表它們犯的錯
+# 不同（多樣性有價值）；如果幾乎沒有改善，代表三家學到的是同一件事，
+# 那麼「選哪一家」這個問題本身就不重要 —— 後者才是這個實驗真正想知道的。
+ensemble:
+  enabled: true
+  method: mean
+
+tracking:
+  enabled: true
+  backend: sqlite:///mlflow.db
+  artifact_dir: mlartifacts
+  experiment: kkbox-churn
+  # 每個候選模型各記一個 run，名稱為 m3_compare_<模型>。
+  run_prefix: m3_compare

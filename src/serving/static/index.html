@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KKBox 訂閱流失預測與挽回決策</title>
+<style>
+  :root{
+    --bg:#faf9f7; --card:#fff; --line:#e6e3dd; --line2:#d3cfc6;
+    --ink:#1f1e1c; --ink2:#5f5e5a; --ink3:#8a8880;
+    --hot:#c2410c; --warm:#ea9a1f; --cool:#0f766e; --accent:#1d4ed8;
+    --hot-bg:#fdf1ec; --cool-bg:#eefaf7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.7 -apple-system,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+  a{color:var(--accent)}
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 64px}
+  header{border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:24px}
+  h1{font-size:23px;font-weight:600;margin:0 0 6px}
+  .sub{color:var(--ink2);font-size:15px;margin:0 0 14px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;font-size:12.5px}
+  .chip{background:#f0eee9;border:1px solid var(--line);border-radius:999px;padding:2px 11px;color:var(--ink2)}
+  .chip b{color:var(--ink);font-weight:600}
+  h2{font-size:15px;font-weight:600;margin:0 0 12px;letter-spacing:.02em}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+
+  .scn{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+  .scn button{text-align:left;background:#fff;border:1px solid var(--line2);border-radius:9px;
+              padding:10px 12px;cursor:pointer;font:inherit;font-size:13.5px;line-height:1.45;color:var(--ink2)}
+  .scn button:hover{border-color:#a8a49a;background:#fcfbf9}
+  .scn button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+  .scn b{display:block;font-weight:600;font-size:13.5px;margin-bottom:1px}
+
+  .ctl{display:flex;align-items:center;gap:12px;margin:13px 0}
+  .ctl label{flex:0 0 132px;font-size:13.5px;color:var(--ink2)}
+  .ctl input[type=range]{flex:1;accent-color:var(--ink)}
+  .ctl output{flex:0 0 58px;text-align:right;font-variant-numeric:tabular-nums;font-size:13.5px;font-weight:600}
+  .tog{display:inline-flex;border:1px solid var(--line2);border-radius:7px;overflow:hidden}
+  .tog button{border:0;background:#fff;padding:5px 13px;cursor:pointer;font:inherit;font-size:13px;color:var(--ink2)}
+  .tog button[aria-pressed=true]{background:var(--ink);color:#fff}
+
+  .p-big{font-size:52px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+  .verdict{display:inline-block;border-radius:7px;padding:4px 13px;font-size:14px;font-weight:600;margin-top:10px}
+  .v-yes{background:var(--hot-bg);color:var(--hot)}
+  .v-no{background:#f0eee9;color:var(--ink2)}
+  .gauge{margin:16px 0 6px}
+  .glabels{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink3);margin-top:4px}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  td{padding:6px 0;vertical-align:top;border-top:1px solid #f0eee9}
+  tr:first-child td{border-top:0}
+  td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink2)}
+  .bar{height:7px;border-radius:4px;background:var(--hot);display:block;margin-top:5px}
+  .bar.neg{background:var(--cool)}
+
+  .stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
+  .stat div{background:#f7f5f1;border-radius:9px;padding:10px 12px}
+  .stat span{display:block;font-size:12px;color:var(--ink3)}
+  .stat b{font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}
+
+  .note{font-size:12.5px;color:var(--ink2);background:#f7f5f1;border-left:3px solid var(--line2);
+        padding:9px 13px;margin-top:12px;border-radius:0 7px 7px 0}
+  .note.warn{background:#fdf7ec;border-left-color:var(--warm)}
+
+  /* 情境說明：第一段（分群統計）永遠看得到，其餘折疊。
+     整段藏起來的話，最該一眼看到的「這群人佔多少、平均流失率多少」也會被藏掉。 */
+  #scn-desc summary{cursor:pointer;list-style:none;padding-right:74px;position:relative}
+  #scn-desc summary::-webkit-details-marker{display:none}
+  #scn-desc summary::after{content:'展開 ▾';position:absolute;right:0;top:0;
+                           font-size:11.5px;color:var(--ink3);white-space:nowrap}
+  #scn-desc details[open] summary::after{content:'收合 ▴'}
+  #scn-desc summary:hover::after{color:var(--ink2)}
+  #scn-desc .fold{margin-top:9px;padding-top:9px;border-top:1px solid var(--line2)}
+  footer{margin-top:30px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:var(--ink2)}
+  footer h2{margin-top:18px}
+  code{background:#f0eee9;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .muted{color:var(--ink3)}
+  .spin{opacity:.45;transition:opacity .12s}
+
+  .btn{border:1px solid var(--ink);background:var(--ink);color:#fff;border-radius:8px;
+       padding:7px 16px;cursor:pointer;font:inherit;font-size:13.5px;font-weight:600}
+  .btn:hover{background:#000}
+  .btn[disabled]{opacity:.5;cursor:default}
+  .btn.ghost{background:#fff;color:var(--ink2);border-color:var(--line2);font-weight:400}
+
+  /* 批次名單。門檻線是這張表的重點 —— 上面橘、下面灰，線本身有標籤。 */
+  /* 名單放進固定高度的視窗，門檻線因此**停在畫面上**、由名單滑過它。
+     50 列攤開是 2,818px，而門檻線隨假設從 377px 移動到 1,425px —— 攤開的話
+     兩者不可能同時入鏡（螢幕錄影要求零捲動），而且這一節會高達 3,317px。 */
+  .btwrap{max-height:430px;overflow-y:auto;margin-top:14px;
+          border:1px solid var(--line);border-radius:9px;background:#fff}
+  .bt{width:100%;border-collapse:collapse;font-size:13px}
+  .bt th{text-align:left;font-weight:600;color:var(--ink3);font-size:11.5px;
+         padding:7px 8px 6px 0;border-bottom:1px solid var(--line2);white-space:nowrap;
+         position:sticky;top:0;background:#fff;z-index:1}
+  .bt td:first-child,.bt th:first-child{padding-left:12px}
+  .bt td:last-child,.bt th:last-child{padding-right:12px}
+  .bt td{padding:5px 8px 5px 0;border-top:1px solid #f2f0eb;vertical-align:middle}
+  .bt td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .bt tr.on td{background:#fdf6f2}
+  .bt .who{font-variant-numeric:tabular-nums;color:var(--ink2)}
+  .bt .seg{color:var(--ink3);font-size:11.5px}
+  .bt .why{color:var(--ink2)}
+  .pill{display:inline-block;border-radius:5px;padding:1px 8px;font-size:11.5px;font-weight:600;white-space:nowrap}
+  .p-on{background:var(--hot-bg);color:var(--hot)}
+  .p-off{background:#f0eee9;color:var(--ink3)}
+  .bt tr.thr td{border-top:0;padding:0}
+  .thrline{display:flex;align-items:center;gap:10px;margin:7px 0;color:var(--hot);
+           font-size:11.5px;font-weight:600;white-space:nowrap}
+  .thrline::before,.thrline::after{content:'';flex:1;height:0;border-top:1px dashed var(--hot)}
+  .bt .pb{display:inline-block;height:6px;border-radius:3px;background:var(--hot);
+          vertical-align:middle;margin-right:7px}
+  .bt tr:not(.on) .pb{background:#c9c5bc}
+  .asm{display:flex;flex-wrap:wrap;gap:20px;align-items:center;margin-top:4px}
+  .asm .ctl{margin:6px 0;flex:1 1 260px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>KKBox 訂閱流失預測與挽回決策</h1>
+  <p class="sub">在有限的挽回預算下，這個月該對哪一批即將到期的訂閱用戶投放資源，才能讓期望淨收益最大？</p>
+  <div class="meta" id="meta"><span class="chip muted">載入中…</span></div>
+</header>
+
+<div class="card">
+  <h2>一、選一個情境</h2>
+  <div class="scn" id="scn"></div>
+  <div class="note" id="scn-desc"></div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h2>二、調整看看哪個特徵最有影響力</h2>
+    <div class="ctl">
+      <label for="autorenew">自動續訂</label>
+      <div class="tog" id="autorenew">
+        <button type="button" data-v="1">開啟</button><button type="button" data-v="0">關閉</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <label for="cancel">最後一筆交易</label>
+      <div class="tog" id="cancel">
+        <button type="button" data-v="0">正常</button><button type="button" data-v="1">取消</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <label for="active30">近 30 天活躍天數</label>
+      <input type="range" id="active30" min="0" max="30" step="1">
+      <output id="active30-o"></output>
+    </div>
+    <div class="ctl">
+      <label for="gap">距上一筆交易</label>
+      <input type="range" id="gap" min="1" max="60" step="1">
+      <output id="gap-o"></output>
+    </div>
+    <p class="note">拉動任何一項會立刻重新呼叫 <code>POST /predict</code>。收聽時數與播放數會依活躍天數等比縮放，維持與其他窗口的一致性。</p>
+    <p class="note warn" id="unseen-combo" hidden>⚠️ <b>這個組合在訓練資料裡一筆都沒有。</b>沒開自動續訂的人不需要取消 —— 時間到就自然結束，所以「已取消 × 自動續訂關」在 99.2 萬人裡是空的。模型仍然會回一個看起來很合理的機率，但那是<b>外推</b>，不是它學過的東西。這正是兩個獨立開關會做到、而真實資料做不到的事。</p>
+  </div>
+
+  <div class="card" id="result">
+    <h2>三、模型怎麼說</h2>
+    <div class="p-big" id="p">—</div>
+    <div class="muted" style="font-size:13px">流失機率 · 投放門檻 p* = <span id="pstar">—</span></div>
+    <div class="gauge">
+      <svg viewBox="0 0 300 26" width="100%" height="26" role="img" aria-labelledby="gt">
+        <title id="gt">流失機率與投放門檻的相對位置</title>
+        <rect x="0" y="9" width="300" height="8" rx="4" fill="#eceae5"></rect>
+        <rect id="gfill" x="0" y="9" width="0" height="8" rx="4" fill="#c2410c"></rect>
+        <line id="gstar" x1="0" x2="0" y1="4" y2="22" stroke="#1f1e1c" stroke-width="2"></line>
+      </svg>
+      <div class="glabels"><span>0%</span><span id="glab">門檻</span><span>100%</span></div>
+    </div>
+    <div id="verdict"></div>
+    <h2 style="margin-top:20px">主要因素</h2>
+    <table id="reasons"></table>
+    <div id="warns"></div>
+  </div>
+</div>
+
+<div class="card" id="batch-card">
+  <h2>四、一批到期用戶進來，誰該拿優惠</h2>
+  <p class="sub" style="font-size:14px;margin:-4px 0 12px">
+    上面是一個人，這裡是一批人 —— 這才是交給營運單位的東西：<b>一份排好序的名單</b>，
+    每個人帶一句理由，中間一條線分開「值得花這筆錢」與「不值得」。</p>
+
+  <button class="btn" id="batch-run" type="button">用範例批次（50 人）評分</button>
+  <span class="muted" style="font-size:12.5px;margin-left:10px" id="batch-hint">一次 POST /predict/batch，50 人同時評分</span>
+
+  <div class="stat" id="batch-stat" style="margin-top:16px"></div>
+
+  <div id="batch-asm" hidden>
+    <p class="note" style="margin-bottom:2px"><b>拉動下面兩個商業假設，看那條線怎麼動。</b>
+      機率不會重算（模型沒有變），變的是<b>值不值得花這筆錢</b> ——
+      <code>p* = 成本 ÷ (挽回成功率 × LTV)</code>。</p>
+    <div class="asm">
+      <div class="ctl">
+        <label>優惠成本 C_offer</label>
+        <input type="range" id="c-offer" min="50" max="400" step="10">
+        <output id="c-offer-o"></output>
+      </div>
+      <div class="ctl">
+        <label>挽回成功率 r_save</label>
+        <input type="range" id="r-save" min="4" max="40" step="1">
+        <output id="r-save-o"></output>
+      </div>
+    </div>
+    <p class="muted" style="font-size:12px;margin:0">
+      LTV <b id="ltv-v">—</b> 不在這裡調 —— 它是<b>由資料推</b>的（平均月費 × 續訂月數），
+      只有「續訂月數」那一項是假設。兩個滑桿調的才是純假設。
+    </p>
+  </div>
+
+  <div class="btwrap"><table class="bt" id="batch-table"></table></div>
+  <div id="batch-warn"></div>
+  <p class="note" id="batch-note" hidden></p>
+</div>
+
+<div class="card">
+  <h2>五、營運視角 —— 這個月該投放給多少人</h2>
+  <div class="stat" id="opstat"></div>
+  <svg id="curve" viewBox="0 0 720 250" width="100%" role="img" aria-labelledby="ct">
+    <title id="ct">期望淨收益隨投放比例先升後降，最佳點約在前 3.8%</title>
+  </svg>
+  <p class="note" id="opnote"></p>
+</div>
+
+<footer>
+  <h2>這個模型不能做什麼</h2>
+  <p>它預測的是<b>「會不會流失」，不是「投放優惠能不能改變他的行為」</b>。後者需要 uplift modeling 與 A/B 實驗，本資料集沒有實驗組／對照組結構，無法回答。把預測機率當成因果效應是這類專案最常見的越界。</p>
+  <p>資料是 2015–2017 年 KKBOX（<b>音樂</b>串流）的歷史快照。結論外推到影音串流或電信服務時需重新驗證。</p>
+  <p class="muted">上方五個情境與那批 50 人都是<b>合成資料</b>，不是真實用戶 —— 依競賽規則，KKBox 資料與其衍生特徵不得散布。數值依公開的分群統計手造。</p>
+  <p><a href="/docs">技術文件與 API（Swagger）</a> ｜ <a href="https://github.com/metro01964/ML_kkbox">GitHub 原始碼</a> ｜ <a href="/health">服務狀態</a></p>
+</footer>
+
+</div>
+<script>
+const $ = s => document.querySelector(s);
+let EX = {}, KEY = null, CUR = null, BASE = null, timer = null;
+
+const nf = n => n.toLocaleString('zh-TW');
+const money = n => 'NT$ ' + Math.round(n).toLocaleString('zh-TW');
+
+async function boot(){
+  const [h, ex, cv] = await Promise.all([
+    fetch('/health').then(r=>r.json()),
+    fetch('/demo/examples').then(r=>r.json()),
+    fetch('/demo/curve').then(r=>r.json()).catch(()=>null)
+  ]);
+  EX = ex;
+  $('#meta').innerHTML = [
+    ['模型', h.model + ' · ' + h.n_features + ' 特徵'],
+    ['評分時點', h.cohort.cutoff_definition === 'expire_date_minus_7d' ? '到期日前 7 天' : h.cohort.cutoff_definition],
+    ['時間外 log loss', h.metrics.log_loss],
+    ['常數基準', h.metrics.constant_baseline],
+  ].map(([k,v])=>`<span class="chip">${k} <b>${v}</b></span>`).join('');
+  $('#pstar').textContent = h.p_star;
+
+  $('#scn').innerHTML = Object.entries(EX).map(([k,v]) =>
+    `<button type="button" data-k="${k}" aria-pressed="false"><b>${v.summary}</b></button>`).join('');
+  $('#scn').addEventListener('click', e => {
+    const b = e.target.closest('button'); if(!b) return; pick(b.dataset.k);
+  });
+
+  document.querySelectorAll('.tog').forEach(t => t.addEventListener('click', e => {
+    const b = e.target.closest('button'); if(!b) return;
+    [...t.children].forEach(c => c.setAttribute('aria-pressed', c === b));
+    apply();
+  }));
+  ['active30','gap'].forEach(id => $('#'+id).addEventListener('input', apply));
+  $('#batch-run').addEventListener('click', runBatch);
+  ['c-offer','r-save'].forEach(id => $('#'+id).addEventListener('input', renderBatch));
+
+  if(cv) drawOps(cv);
+  pick(Object.keys(EX)[0]);
+}
+
+function pick(k){
+  KEY = k;
+  document.querySelectorAll('#scn button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === k));
+  // 第一段是分群統計（佔多少用戶、平均流失率），永遠顯示；其餘折疊。
+  const md = s => s.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`(.+?)`/g,'<code>$1</code>');
+  const paras = EX[k].description.split('\n\n').map(s=>s.trim()).filter(Boolean);
+  const rest = paras.slice(1).map(md).join('<br><br>');
+  $('#scn-desc').innerHTML = rest
+    ? `<details><summary>${md(paras[0])}</summary><div class="fold">${rest}</div></details>`
+    : md(paras[0] || '');
+  BASE = structuredClone(EX[k].value);
+  const f = BASE.features, L = BASE.logs || {};
+  setTog('#autorenew', f.last_is_auto_renew ?? 0);
+  setTog('#cancel', f.last_is_cancel ?? 0);
+  $('#active30').value = L.log30_active_days ?? 0;
+  $('#gap').value = Math.max(1, Math.min(60, dayGap(f.cutoff, f.last_tx)));
+  apply();
+}
+
+const setTog = (sel, v) => document.querySelectorAll(sel+' button')
+  .forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v) === String(v)));
+const getTog = sel => +document.querySelector(sel+' button[aria-pressed=true]').dataset.v;
+
+function toDate(n){ return new Date(Math.floor(n/10000), Math.floor(n/100)%100-1, n%100); }
+function fromDate(d){ return d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate(); }
+function dayGap(a,b){ return Math.round((toDate(a)-toDate(b))/86400000); }
+function shiftDays(n, days){ const d = toDate(n); d.setDate(d.getDate()-days); return fromDate(d); }
+
+function apply(){
+  const body = structuredClone(BASE);
+  const f = body.features;
+  f.last_is_auto_renew = getTog('#autorenew');
+  f.last_is_cancel = getTog('#cancel');
+
+  // 兩個開關獨立，所以使用者切得出一個資料裡不存在的組合。與其擋住它
+  // （擋住等於假裝模型不會被這樣呼叫），不如在它發生的當下講清楚。
+  $('#unseen-combo').hidden = !(f.last_is_cancel === 1 && f.last_is_auto_renew === 0);
+
+  const gap = +$('#gap').value;
+  $('#gap-o').textContent = gap + ' 天';
+  f.last_tx = Math.max(f.first_tx, shiftDays(f.cutoff, gap));
+
+  const a30 = +$('#active30').value;
+  $('#active30-o').textContent = a30 + ' 天';
+  if(body.logs) rescale(body.logs, a30);
+
+  clearTimeout(timer);
+  timer = setTimeout(()=>send(body), 120);
+}
+
+// 依 30 天活躍天數等比縮放強度欄位，並重算所有衍生比率 ——
+// 手動改一欄而不動其他欄，會讓模型看到自相矛盾的輸入。
+function rescale(L, a30){
+  const base = L.log30_active_days || 1;
+  const r = a30 / base;
+  for(const w of [7,14,30,90]){
+    const cap = Math.min(w, Math.round((L['log'+w+'_active_days']||0) * r));
+    L['log'+w+'_active_days'] = w === 30 ? a30 : cap;
+    for(const m of ['secs','plays','completed','unq'])
+      L['log'+w+'_'+m] = Math.round((L['log'+w+'_'+m]||0) * r * 10)/10;
+    const ad = L['log'+w+'_active_days'], pl = L['log'+w+'_plays'], sc = L['log'+w+'_secs'];
+    L['log'+w+'_completion'] = pl > 0 ? +(L['log'+w+'_completed']/pl).toFixed(4) : null;
+    L['log'+w+'_active_ratio'] = +(ad/w).toFixed(4);
+    L['log'+w+'_secs_per_active_day'] = ad > 0 ? +(sc/ad).toFixed(1) : null;
+  }
+  const tr = (n,nd,d,dd) => (L[d]/dd) > 0 ? +(((L[n]/nd)/(L[d]/dd)).toFixed(4)) : null;
+  L.log_trend_7_30 = tr('log7_secs',7,'log30_secs',30);
+  L.log_trend_30_90 = tr('log30_secs',30,'log90_secs',90);
+  L.log_trend_active_7_30 = tr('log7_active_days',7,'log30_active_days',30);
+  L.log_has_logs = L.log90_plays > 0 ? 1 : 0;
+}
+
+async function send(body){
+  $('#result').classList.add('spin');
+  try{
+    const r = await fetch('/predict', {method:'POST', headers:{'Content-Type':'application/json'},
+                                       body: JSON.stringify(body)});
+    const d = await r.json();
+    if(!r.ok){ $('#p').textContent = '—'; $('#verdict').innerHTML =
+      `<div class="note warn">請求被拒：${JSON.stringify(d.detail).slice(0,220)}</div>`; return; }
+    render(d);
+  } finally { $('#result').classList.remove('spin'); }
+}
+
+function render(d){
+  $('#p').textContent = (d.p_churn*100).toFixed(1) + '%';
+  $('#p').style.color = d.above_threshold ? 'var(--hot)' : 'var(--cool)';
+  $('#gfill').setAttribute('width', Math.max(1, d.p_churn*300));
+  $('#gfill').setAttribute('fill', d.above_threshold ? '#c2410c' : '#0f766e');
+  $('#gstar').setAttribute('x1', d.p_star*300); $('#gstar').setAttribute('x2', d.p_star*300);
+  $('#glab').textContent = '門檻 ' + (d.p_star*100).toFixed(1) + '%';
+  $('#verdict').innerHTML = d.above_threshold
+    ? `<div class="verdict v-yes">投放挽回優惠 · 期望淨收益 ${money(d.expected_net)}</div>`
+    : `<div class="verdict v-no">不投放 · 期望淨收益 ${money(d.expected_net)}（投了會虧）</div>`;
+
+  const top = Math.max(...d.reasons.map(r => Math.abs(r.group_shap_log_odds)), 1e-9);
+  $('#reasons').innerHTML = d.reasons.length ? d.reasons.map(r => `
+    <tr><td>${r.rank}. ${r.reason}
+      <span class="bar${r.group_shap_log_odds<0?' neg':''}"
+            style="width:${Math.abs(r.group_shap_log_odds)/top*100}%"></span></td>
+      <td class="n">${r.group_shap_log_odds>0?'+':''}${r.group_shap_log_odds.toFixed(2)}</td></tr>`).join('')
+    : '<tr><td class="muted">沒有超過呈現門檻的因素</td></tr>';
+
+  $('#warns').innerHTML = (d.warnings||[]).map(w => `<div class="note warn">${w}</div>`).join('');
+}
+
+// ---------------------------------------------------------------------------
+// 四、批次名單
+// ---------------------------------------------------------------------------
+//
+// 兩段式：GET /demo/batch 拿一批（未評分的）payload，再 POST /predict/batch 拿分數。
+// 回一份算好的名單會少一趟往返，但那樣示範的就不是模型，是一個 JSON 檔。
+//
+// 拖假設滑桿時**不重打 API**：機率是模型算的、不隨假設變，變的只有
+// p* = C / (r × LTV) 與逐人的期望淨收益。那兩個是算術，不是推論。
+
+let BATCH = null, SEG = {}, REASONS_READY = false;
+
+async function runBatch(){
+  const btn = $('#batch-run');
+  btn.disabled = true; btn.textContent = '評分中…';
+  $('#batch-card').classList.add('spin');
+  try{
+    const src = await fetch('/demo/batch').then(r => r.json());
+    SEG = Object.fromEntries(src.users.map(u => [u.id, u.segment]));
+    const users = src.users.map(u => ({id:u.id, features:u.features, logs:u.logs}));
+
+    // 兩段式。TreeSHAP 佔一次請求 97.5% 的成本，而表格要畫出來只需要機率 ——
+    // 所以先要機率（實測快 14.7 倍），把表和滑桿交給使用者，再背景補原因碼。
+    // 一次要完的話，0.1 vCPU 的免費方案上要等十幾秒才看得到任何東西。
+    const post = reasons => fetch('/predict/batch', {method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({users, reasons})});
+
+    REASONS_READY = false;
+    const r = await post(false);
+    const d = await r.json();
+    if(!r.ok){
+      $('#batch-warn').innerHTML =
+        `<div class="note warn">批次被拒：${JSON.stringify(d.detail).slice(0,300)}</div>`;
+      return;
+    }
+    BATCH = d;
+    $('#batch-note').hidden = false;
+    $('#batch-note').innerHTML = mdText(src.note);
+    $('#batch-asm').hidden = false;
+    $('#ltv-v').textContent = money(d.assumptions.ltv_saved);
+    $('#c-offer').value = d.assumptions.c_offer;
+    $('#r-save').value = Math.round(d.assumptions.r_save * 100);
+
+    // 守門：用伺服器自己的假設把 p* 與期望淨收益重算一遍。這一頁為了讓滑桿即時
+    // 反應而在前端重算了 score.py 的那條算術 —— 兩邊對不上就是這裡算錯了，而那
+    // 是一個不會有任何錯誤訊息的錯誤（畫面照樣好好的，只是數字是假的）。
+    const a = d.assumptions, drift = [];
+    if(Math.abs(a.c_offer / (a.r_save * a.ltv_saved) - d.p_star) > 1e-6) drift.push('p*');
+    const u0 = d.users[0];
+    if(u0 && Math.abs(netOf(u0.p_churn, a.c_offer, a.r_save, a.ltv_saved) - u0.expected_net) > 0.2)
+      drift.push('期望淨收益');
+    if(drift.length) $('#batch-warn').innerHTML =
+      `<div class="note warn">⚠️ 前端重算的 ${drift.join('、')} 與服務回傳的對不上 ——
+       這一頁的滑桿算術與 <code>src/serving/score.py</code> 不同步了，請以 API 回應為準。</div>`;
+
+    renderBatch();
+
+    // 第二段：原因碼。機率不覆蓋 —— 兩條路徑的機率必須逐位元相同（服務端有測試
+    // 釘住），所以這裡只補 reasons，順便換上完整的整批警告。
+    $('#batch-hint').textContent = `${d.n} 人已評分 · 正在計算逐人原因碼…`;
+    post(true).then(r2 => r2.ok ? r2.json() : null).then(full => {
+      if(!full || !BATCH) return;
+      const byId = Object.fromEntries(full.users.map(u => [u.id, u]));
+      BATCH.users.forEach(u => {
+        const got = byId[u.id];
+        if(got){ u.reasons = got.reasons; u.warnings = got.warnings; }
+      });
+      BATCH.warnings = full.warnings;
+      REASONS_READY = true;
+      $('#batch-hint').textContent = `${d.n} 人 · 機率與原因碼皆即時計算 · 模型 ${d.model.name}`;
+      renderBatch();
+    }).catch(() => {
+      $('#batch-hint').textContent = `${d.n} 人已評分 · 原因碼計算失敗`;
+    });
+  } catch(e){
+    $('#batch-warn').innerHTML = `<div class="note warn">批次失敗：${e}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = '重新評分';
+    $('#batch-card').classList.remove('spin');
+  }
+}
+
+const netOf = (p, c, r, ltv) => p * r * ltv - c;
+const mdText = s => s.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`(.+?)`/g,'<code>$1</code>');
+
+function renderBatch(){
+  if(!BATCH) return;
+  const C = +$('#c-offer').value, R = +$('#r-save').value / 100;
+  const L = BATCH.assumptions.ltv_saved;
+  const pStar = C / (R * L);
+  $('#c-offer-o').textContent = C + ' 元';
+  $('#r-save-o').textContent = (R*100).toFixed(0) + '%';
+
+  const rows = [...BATCH.users].sort((a,b) => b.p_churn - a.p_churn);
+  const on = rows.filter(u => u.p_churn > pStar);
+  const netTotal = on.reduce((s,u) => s + netOf(u.p_churn, C, R, L), 0);
+
+  $('#batch-stat').innerHTML = [
+    ['這批人', nf(BATCH.n) + ' 人'],
+    ['值得投放', nf(on.length) + ' 人'],
+    ['佔比', (on.length / BATCH.n * 100).toFixed(0) + '%'],
+    ['投放門檻 p*', (pStar*100).toFixed(1) + '%'],
+    ['要花的錢', money(on.length * C)],
+    ['期望淨收益', money(netTotal)],
+  ].map(([k,v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('');
+
+  // p* > 100% 是有意義的，不是溢位：優惠的成本已經超過「挽回一個必定流失的人」
+  // 的期望價值，所以**沒有任何人值得投放**。畫面上直接講出來，否則一個 129% 的
+  // 機率門檻讀起來像壞掉了。
+  const thr = pStar > 1
+    ? `<tr class="thr"><td colspan="6"><div class="thrline">門檻 p* = ${(pStar*100).toFixed(1)}%
+        ·　超過 100%，這組假設下<b style="margin:0 3px">沒有任何人值得投放</b>——
+        優惠成本已經高過挽回一個必定流失的人所能拿回的價值</div></td></tr>`
+    : `<tr class="thr"><td colspan="6"><div class="thrline">門檻 p* = ${(pStar*100).toFixed(1)}%
+        ·　上面 ${on.length} 人值得花這筆錢，下面 ${BATCH.n - on.length} 人不值得</div></td></tr>`;
+
+  let html = `<tr><th>#</th><th>用戶</th><th class="n">流失機率</th><th>決策</th>
+              <th>主要原因</th><th class="n">期望淨收益</th></tr>`;
+  let placed = false;
+  rows.forEach((u, i) => {
+    const above = u.p_churn > pStar;
+    if(!above && !placed){ html += thr; placed = true; }
+    const net = netOf(u.p_churn, C, R, L);
+    const why = u.reasons.length ? u.reasons[0].reason
+              : REASONS_READY ? '<span class="muted">沒有推高風險的因素</span>'
+              : '<span class="muted">計算中…</span>';
+    html += `<tr class="${above ? 'on' : ''}">
+      <td class="n muted">${i+1}</td>
+      <td><span class="who">${u.id}</span> <span class="seg">${SEG[u.id] || ''}</span></td>
+      <td class="n"><span class="pb" style="width:${Math.max(2, u.p_churn*46).toFixed(0)}px"></span>
+          <b>${(u.p_churn*100).toFixed(1)}%</b></td>
+      <td><span class="pill ${above ? 'p-on' : 'p-off'}">${above ? '投放' : '不投放'}</span></td>
+      <td class="why">${why}</td>
+      <td class="n" style="color:${net >= 0 ? 'var(--hot)' : 'var(--ink3)'}">${money(net)}</td>
+    </tr>`;
+  });
+  if(!placed) html += thr;   // 全部都在門檻之上時，線畫在最後
+  $('#batch-table').innerHTML = html;
+
+  // 門檻線捲到視窗中央。不做的話拖滑桿時線會滑出視窗，而那條線就是這張表的重點。
+  const wrap = document.querySelector('.btwrap'), line = $('.thrline');
+  if(wrap && line){
+    const y = line.getBoundingClientRect().top - wrap.getBoundingClientRect().top + wrap.scrollTop;
+    wrap.scrollTop = Math.max(0, y - wrap.clientHeight / 2);
+  }
+
+  $('#batch-warn').innerHTML = (BATCH.warnings || [])
+    .map(w => `<div class="note warn">${w}</div>`).join('');
+}
+
+function drawOps(c){
+  const a = c.at_p_star, o = c.optimum;
+  $('#opstat').innerHTML = [
+    ['本月到期用戶', nf(c.n_users)],
+    ['依 p* 投放', nf(a.n_targeted) + ' 人'],
+    ['佔比', (a.share*100).toFixed(2) + '%'],
+    ['名單命中率', (a.precision*100).toFixed(1) + '%'],
+    ['期望淨收益', money(a.expected_net)],
+  ].map(([k,v]) => `<div><span>${k}</span><b>${v}</b></div>`).join('');
+
+  // y 軸要夾住負向長尾。撒給全部人的淨收益約 −3,000 萬，而峰值只有 +330 萬 ——
+  // 直接用 min/max 當範圍的話，「0 到峰值」這段唯一有意義的區間會被壓到剩十幾個
+  // 像素，零線、峰值點與兩個標籤全部疊在一起（實際發生過）。
+  // 夾成上下大致對稱，曲線往下衝出視野反而更清楚地說明「撒太廣會虧」。
+  const pts = c.curve, W = 720, H = 250, PL = 52, PR = 18, PT = 30, PB = 40;
+  const plotW = W - PL - PR, plotH = H - PT - PB;
+  const hi = Math.max(...pts.map(p => p.net));
+  const top = hi * 1.18, bot = -hi * 0.95;
+  const xs = k => PL + k * plotW;
+  const ys = v => PT + (top - Math.min(Math.max(v, bot), top)) / (top - bot) * plotH;
+  const wan = v => (v / 10000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 萬';
+
+  const path = pts.map((p, i) => (i ? 'L' : 'M') + xs(p.k).toFixed(1) + ' ' + ys(p.net).toFixed(1)).join(' ');
+  const zero = ys(0);
+  const ox = xs(o.k), oy = ys(o.expected_net);
+
+  // 損益兩平：峰值之後第一個轉負的點。線性內插求交點，比直接抓那個點準。
+  let be = null;
+  for (let i = 1; i < pts.length; i++) {
+    if (pts[i-1].net >= 0 && pts[i].net < 0) {
+      const t = pts[i-1].net / (pts[i-1].net - pts[i].net);
+      be = pts[i-1].k + t * (pts[i].k - pts[i-1].k);
+      break;
+    }
+  }
+
+  $('#curve').innerHTML = `
+    <line x1="${PL}" y1="${zero}" x2="${W-PR}" y2="${zero}" stroke="#c9c5bc" stroke-width="1"/>
+    <text x="${PL-8}" y="${zero+4}" font-size="11" fill="#8a8880" text-anchor="end">0</text>
+    <path d="${path}" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+    ${be === null ? '' : `
+      <line x1="${xs(be)}" y1="${PT}" x2="${xs(be)}" y2="${zero}" stroke="#8a8880" stroke-width="1" stroke-dasharray="2 3"/>
+      <text x="${xs(be)+6}" y="${zero-8}" font-size="11.5" fill="#5f5e5a">超過 ${(be*100).toFixed(0)}% 開始虧錢</text>`}
+    <line x1="${ox}" y1="${oy}" x2="${ox}" y2="${zero}" stroke="#c2410c" stroke-width="1" stroke-dasharray="3 3"/>
+    <circle cx="${ox}" cy="${oy}" r="4.5" fill="#c2410c"/>
+    <text x="${ox+10}" y="${oy-10}" font-size="12.5" font-weight="600" fill="#c2410c">最佳投放 ${(o.k*100).toFixed(1)}%</text>
+    <text x="${ox+10}" y="${oy+6}" font-size="12" fill="#c2410c">淨收益 ${wan(o.expected_net)}</text>
+    <text x="${PL}" y="${H-12}" font-size="11" fill="#8a8880">投放 0%</text>
+    <text x="${W-PR}" y="${H-12}" font-size="11" fill="#8a8880" text-anchor="end">投放 100%（虧損）</text>`;
+
+  const diff = Math.abs(a.expected_net - o.expected_net);
+  $('#opnote').innerHTML =
+    `投放門檻 <code>p* = 成本 ÷ (挽回成功率 × LTV) = ${c.assumptions.c_offer} ÷ (${c.assumptions.r_save} × ${nf(c.assumptions.ltv_saved)}) = ${c.assumptions.p_star}</code>。
+     <br><br><b>這條公式沒有看過任何標籤</b>，純粹由商業假設推導 —— 但它的落點（${money(a.expected_net)}）
+     與曲線的實測極大值（${money(o.expected_net)}）只差 ${money(diff)}，也就是 ${(diff/o.expected_net*100).toFixed(3)}%。
+     <br><br>撒給全部 ${nf(c.n_users)} 人的話，淨收益是負的 —— 曲線右半段一路往下。價值不在「找出所有會流失的人」，
+     在「找出投放才划算的那 ${(a.share*100).toFixed(1)}%」。`;
+}
+
+boot().catch(e => { $('#meta').innerHTML = `<span class="chip">載入失敗：${e}</span>`; });
+</script>
+</body>
+</html>

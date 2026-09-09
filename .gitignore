@@ -1,0 +1,76 @@
+# === 競賽規則：資料絕對不可上傳到 GitHub ===
+# 開頭的斜線很重要：沒有它的話 `data/` 會匹配任何層級的 data 目錄，
+# 連 src/data/（程式碼）都會被忽略。加了斜線就只匹配 repo 根目錄那一個。
+/data/
+/models/
+*.csv
+*.tsv
+*.zip
+*.7z
+*.parquet
+*.feather
+*.h5
+*.pkl
+*.joblib
+# M6 的模型 artifact。二進位、每次重訓都變，git 存不動它；正式位置在
+# data_root/artifacts/（見 src/config.py 的 Paths.artifacts）。要帶去 Docker /
+# HF Spaces 就整個目錄複製過去，用環境變數 MODEL_ARTIFACT 指路。
+*.cbm
+/artifacts/
+
+# ⚠️ **一個刻意的例外：deploy/artifacts/**
+#
+# 上面那條規則的理由是「每次重訓都變」—— 那對實驗過程中產生的每一份模型成立，
+# 把它們全存進 git 會讓歷史永久膨脹。但這裡要進版控的是**單一份已部署的版本**，
+# 2.5 MB，更新頻率以月計。規則的前提在這個用途上不成立。
+#
+# 為什麼非得進版控：Koyeb / Render / HF Spaces 的建置器是從 git repo 建映像檔的，
+# 它們看不到本機的 data_root。模型不在 repo 裡，映像檔就沒有模型。
+#
+# 升級路徑：模型變大或要頻繁換版時，改用 GitHub Release 存二進位、建置時下載，
+# 這樣既不進 git 歷史、建置器又拿得到。現在還不需要那個複雜度。
+!deploy/artifacts/
+!deploy/artifacts/**
+
+# === Kaggle 憑證 ===
+.kaggle/
+kaggle.json
+
+# === 機器專屬設定：路徑因機器而異，只有 .example 範本進 Git ===
+configs/paths.yaml
+
+# === Python ===
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+*.egg-info/
+.ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
+
+# === 實驗追蹤 ===
+mlruns/
+mlflow.db
+mlartifacts/
+wandb/
+outputs/
+
+# CatBoost 每次 fit 會在工作目錄留下一份訓練日誌（learn_error.tsv 等）。
+# 那是執行的副產物，不是紀錄 —— MLflow 才是紀錄。
+catboost_info/
+
+# === 編輯器與 OS ===
+.vscode/
+.idea/
+.claude/
+.DS_Store
+Thumbs.db
+
+# === 本機暫存 ===
+#
+# tmp/ 是隨手放東西的地方（轉出來的圖、抓下來的檔）。沒有這條規則的話，一個
+# git add . 就會把裡面的東西推上去，而那正是資料與版權材料最容易外洩的路徑。
+tmp/
+scratch/

@@ -1,0 +1,20 @@
+# 機器專屬路徑設定 —— 本檔案是**範本**，會進 Git。
+#
+# 使用方式：
+#   copy configs\paths.example.yaml configs\paths.yaml
+#   然後把 data_root 改成這台機器的實際路徑。
+#
+# 為什麼要這樣做：
+#   configs/paths.yaml 不進 Git（見 .gitignore），因為它每台機器都不一樣。
+#   程式碼一律讀 paths.yaml，所以換機器時 src/ 與 scripts/ 一個字都不用改。
+#   這是 SPEC §8「禁止硬編碼」原則套用到路徑上的結果。
+#
+# 這台機器目前的路徑（SPEC §2.2）：D:/ml_data
+
+# 資料根目錄。底下會自動建立兩個子目錄：
+#   <data_root>/archives/   Kaggle 下載的 .7z 壓縮檔
+#   <data_root>/raw/        解壓後的 .csv（SPEC §2.1 所指的位置）
+data_root: D:/ml_data
+
+# 7-Zip 執行檔。留空則自動從常見安裝位置與 PATH 搜尋。
+sevenzip: ""

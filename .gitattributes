@@ -1,0 +1,23 @@
+# 換行字元規則。
+#
+# 本專案在 Windows（開發）與 Linux（GitHub Actions）兩種環境執行，
+# 有些檔案對行尾格式敏感，不能交給 git 的預設推斷。
+
+* text=auto
+
+# Makefile 與 workflow 一定要是 LF。
+#
+# GNU Make 在 Linux 上讀到 CRLF 時，會把行尾的 \r 當成指令的一部分，
+# 於是 `uv sync\r` 這種找不到的指令會失敗，錯誤訊息還完全看不出原因
+# —— 印出來的指令名稱看起來完全正常，因為 \r 不可見。
+Makefile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sh text eol=lf
+
+# 二進位檔不得做任何轉換，否則會損毀。
+*.png binary
+*.jpg binary
+*.pdf binary
+*.parquet binary
+*.7z binary
