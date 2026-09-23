@@ -6,7 +6,7 @@
 
 ## 線上 Demo：Hugging Face Spaces
 
-- [線上 Demo](https://huggingface.co/spaces/lee851104/kkbox-demo)
+- [線上 Demo](https://lee851104-kkbox-demo.hf.space)
 - [API 文件](https://lee851104-kkbox-demo.hf.space/docs)
 
 本專案使用 Hugging Face Spaces 託管 Docker 容器。`Dockerfile` 維持平台中立，

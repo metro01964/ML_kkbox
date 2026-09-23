@@ -2,7 +2,7 @@
 
 > **這個月有 96.9 萬名訂閱者到期，挽回預算只夠發給一小部分人。該發給誰？**
 
-**[▶ 線上 Demo](https://huggingface.co/spaces/lee851104/kkbox-demo)**　·　[API 文件](https://lee851104-kkbox-demo.hf.space/docs)　·　[完整發現](FINDINGS.md)　·　[模型卡](MODEL_CARD.md)
+**[▶ 線上 Demo](https://lee851104-kkbox-demo.hf.space)**　·　[API 文件](https://lee851104-kkbox-demo.hf.space/docs)　·　[完整發現](FINDINGS.md)　·　[模型卡](MODEL_CARD.md)
 
 ---
 
@@ -26,7 +26,7 @@ KKBox 每月有 96.9 萬名訂閱者到期，約 9% 不再續訂。挽回要花�
 
 ## Demo：一批到期用戶進來，誰該拿挽回優惠
 
-[![Demo：一批到期用戶進來，誰該拿挽回優惠](reports/figures/demo.gif)](https://huggingface.co/spaces/lee851104/kkbox-demo)
+[![Demo：一批到期用戶進來，誰該拿挽回優惠](reports/figures/demo.gif)](https://lee851104-kkbox-demo.hf.space)
 
 點圖進線上服務。輸入一位到期用戶，回傳的是機率、該不該投放、這一位的期望淨收益，以及最多三句中文原因碼 —— 全部即時計算。
 

@@ -8,11 +8,11 @@
 
 ## 線上 Demo：先看成果
 
-### 👉 **https://huggingface.co/spaces/lee851104/kkbox-demo**
+### 👉 **https://lee851104-kkbox-demo.hf.space**
 
 一個頁面、兩個視角：上半部是**一個人**，下半部是**一整個月**。
 
-[![Demo 上半部：情境選擇、滑桿、機率與原因碼](reports/figures/17_demo_page.png)](https://huggingface.co/spaces/lee851104/kkbox-demo)
+[![Demo 上半部：情境選擇、滑桿、機率與原因碼](reports/figures/17_demo_page.png)](https://lee851104-kkbox-demo.hf.space)
 
 ### 上半部：選一個情境，拉滑桿看機率怎麼動
 
@@ -31,7 +31,7 @@
 
 每拉一次滑桿都會**重新呼叫一次 `POST /predict`**，頁面上沒有任何預先算好的數字。
 
-[![Demo 下半部：營運視角與期望淨收益曲線](reports/figures/18_demo_page.png)](https://huggingface.co/spaces/lee851104/kkbox-demo)
+[![Demo 下半部：營運視角與期望淨收益曲線](reports/figures/18_demo_page.png)](https://lee851104-kkbox-demo.hf.space)
 
 ### 下半部：同一個模型套到整個月
 
@@ -57,7 +57,7 @@ Swagger UI。點 **POST /predict** → **Try it out** → 下拉選單挑情境 
 >
 > 📋 **範例資料是合成的**，不是真實用戶 —— 依競賽規則，KKBox 資料與其衍生特徵不得散布（見 [MODEL_CARD.md](MODEL_CARD.md) 的授權聲明）。數值依本 README 已公開的分群統計手造，產生方式見 [src/serving/examples.py](src/serving/examples.py)。
 >
-> 線上 Demo 使用 [Hugging Face Spaces](https://huggingface.co/spaces/lee851104/kkbox-demo)，部署步驟見 [deploy/README.md](deploy/README.md)。
+> 線上 Demo 使用 [Hugging Face Spaces](https://lee851104-kkbox-demo.hf.space)，部署步驟見 [deploy/README.md](deploy/README.md)。
 
 ---
 
