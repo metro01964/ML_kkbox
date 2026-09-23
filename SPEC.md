@@ -592,7 +592,7 @@ M0–M6 的里程碑骨架如下。
 | **M3** ✅ | LGBM / XGB / CatBoost 三方比較 + null importance 特徵篩選（另加 target encoding 對照與超參數搜尋） | 比較表 + 篩選前後對照 —— **已交付**，實測 **0.15367（−2.16%，CatBoost）**，並經配對 multi-seed 8/8 確認（§7.12）。§3.3 的 0.108 門檻**無法在本地量測**，改列 M6，理由見 §7.4 第六點 |
 | **M4** ✅ | 機率校準 + 業務指標 | Reliability diagram、Brier、期望淨收益曲線、敏感度熱圖 —— **全數交付**。校準：診斷（圖 09/10）+ isotonic 校準器（圖 11），結論是**不上線**（§7.10）。業務指標：期望淨收益曲線與敏感度熱圖（圖 12/13），最佳投放比例 5.0%（§7.13） |
 | **M5** ✅ | SHAP 解釋 + 流失原因碼生成 | 任一用戶可輸出 Top-3 流失原因 —— **已交付**，`make explain`（§7.14）。名單 48,853 人（`p > p*`），逐人 Top-3 中文原因碼 + 圖 14，輸出分營運呈現與底層稽核兩份。加總恆等式最大差 6.9e-15。⚠️ 例句「由 22 降至 4」的兩時點差特徵集裡沒有，改用 `(log90 − log30) / 2` 的對照並標明它是解釋用脈絡；**每句原因碼帶量測時點**，`last_is_cancel` 標為到期日訊號、不可沿用到 M6 的 T−7 版本（影響 48.79% 的人、42.35% 的解釋強度） |
-| **M6** ✅ | FastAPI 服務 + PSI 漂移監控 + 線上 Demo | Docker 起服務，`/predict` 回傳機率與原因；含 `cutoff = expire_date − 7d` 版本的分數對照 —— **`lead_days` 這一塊已交付**（`make lead-time`，§7.15）：共同子集退步 **+18.11%**，並量出「看不到的那批人流失率 70.25%」這個部署約束。**`/predict` 與模型 artifact 也已交付**（`make artifact-t7` + `make serve`，§7.16）：兩種介面、機率與 SHAP 即時算、artifact 必填 `cutoff_definition`、載入時比對特徵程式的邏輯指紋。**PSI 漂移監控也已交付**（`make drift`，§7.17）：三個部署時拿得到的監控全部回報「穩定」，而基準率動了 +39.9% —— 那條限制本身就是交付物。**`MODEL_CARD.md` 已交付**（§7.18）：五條「不可用於」、監控盲區、以及群組公平性這個**明講的空白**。**Kaggle 推論管線也已交付**（`make kaggle`，§7.19）：新增第三種 cutoff 規則（固定評分日）與第九條守門（cutoff 不得超出資料涵蓋範圍），提交檔已產生，公榜分數待回填。**紅線 4 也已交付**（`make final`，§7.20）：合併 `feb_fixed + mar_fixed` 重訓最終模型，四段切分全部綁 `msno`，八條紅線到齊；違規對照組量到的代價**小於實驗解析度**，而同分布 CV 比時間外分數樂觀 **13.0%**。**Docker 與線上 Demo 也已交付**：容器跑在 Render，原訂的 HF Spaces 因 2026-08 改制（Docker Space 需 PRO 訂閱）改為平台中立部署，同一份 `Dockerfile` 可搬回（見 `deploy/README.md`）。唯一未結的是 Kaggle late submission 的公榜分數（§3.3） |
+| **M6** ✅ | FastAPI 服務 + PSI 漂移監控 + 線上 Demo | Docker 起服務，`/predict` 回傳機率與原因；含 `cutoff = expire_date − 7d` 版本的分數對照 —— **`lead_days` 這一塊已交付**（`make lead-time`，§7.15）：共同子集退步 **+18.11%**，並量出「看不到的那批人流失率 70.25%」這個部署約束。**`/predict` 與模型 artifact 也已交付**（`make artifact-t7` + `make serve`，§7.16）：兩種介面、機率與 SHAP 即時算、artifact 必填 `cutoff_definition`、載入時比對特徵程式的邏輯指紋。**PSI 漂移監控也已交付**（`make drift`，§7.17）：三個部署時拿得到的監控全部回報「穩定」，而基準率動了 +39.9% —— 那條限制本身就是交付物。**`MODEL_CARD.md` 已交付**（§7.18）：五條「不可用於」、監控盲區、以及群組公平性這個**明講的空白**。**Kaggle 推論管線也已交付**（`make kaggle`，§7.19）：新增第三種 cutoff 規則（固定評分日）與第九條守門（cutoff 不得超出資料涵蓋範圍），提交檔已產生，公榜分數待回填。**紅線 4 也已交付**（`make final`，§7.20）：合併 `feb_fixed + mar_fixed` 重訓最終模型，四段切分全部綁 `msno`，八條紅線到齊；違規對照組量到的代價**小於實驗解析度**，而同分布 CV 比時間外分數樂觀 **13.0%**。**Docker 與線上 Demo 也已交付**：容器部署於 Hugging Face Spaces，使用平台中立的 `Dockerfile` 部署（見 `deploy/README.md`）。唯一未結的是 Kaggle late submission 的公榜分數（§3.3） |
 
 ### 7.1 M0 完成度（2026-08-08）
 
@@ -2269,7 +2269,7 @@ artifact 的清單決定。「歸因指到錯的欄位」在這條路徑上完�
 
 #### 十、後續交付
 
-Docker 與線上 Demo 已完成，容器跑在 Render（平台選擇的理由見 `deploy/README.md`）。
+Docker 與線上 Demo 已完成，容器部署於 Hugging Face Spaces（部署步驟見 `deploy/README.md`）。
 其餘後續：PSI 漂移監控見 §7.17、`MODEL_CARD.md` 見 §7.18、Kaggle 管線見 §7.19、
 紅線 4 的 GroupKFold 四段切分見 §7.20。
 

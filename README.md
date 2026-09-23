@@ -2,7 +2,7 @@
 
 > **這個月有 96.9 萬名訂閱者到期，挽回預算只夠發給一小部分人。該發給誰？**
 
-**[▶ 線上 Demo](https://ml-kkbox.onrender.com)**　·　[API 文件](https://ml-kkbox.onrender.com/docs)　·　[完整發現](FINDINGS.md)　·　[模型卡](MODEL_CARD.md)
+**[▶ 線上 Demo](https://huggingface.co/spaces/lee851104/kkbox-demo)**　·　[API 文件](https://lee851104-kkbox-demo.hf.space/docs)　·　[完整發現](FINDINGS.md)　·　[模型卡](MODEL_CARD.md)
 
 ---
 
@@ -26,7 +26,7 @@ KKBox 每月有 96.9 萬名訂閱者到期，約 9% 不再續訂。挽回要花�
 
 ## Demo：一批到期用戶進來，誰該拿挽回優惠
 
-[![Demo：一批到期用戶進來，誰該拿挽回優惠](reports/figures/demo.gif)](https://ml-kkbox.onrender.com)
+[![Demo：一批到期用戶進來，誰該拿挽回優惠](reports/figures/demo.gif)](https://huggingface.co/spaces/lee851104/kkbox-demo)
 
 點圖進線上服務。輸入一位到期用戶，回傳的是機率、該不該投放、這一位的期望淨收益，以及最多三句中文原因碼 —— 全部即時計算。
 
@@ -41,7 +41,7 @@ KKBox 每月有 96.9 萬名訂閱者到期，約 9% 不再續訂。挽回要花�
 | **特徵** | 61 欄（交易 23 ＋ 收聽 38） | 分組消融實驗逐組量增量貢獻。38 個收聽特徵只換來 1.38%，留下來的每一組都有實測依據而非直覺 |
 | **可解釋性** | CatBoost 原生 TreeSHAP | 逐人 Top-3 中文原因碼，依語意分組避免同一件事講三次；加總恆等式逐列驗 |
 | **決策層** | 期望淨收益曲線 ＋ 門檻 `p* = C_offer / (r_save × LTV)` | 把機率換成「發給誰」。門檻不看任何標籤，落點與實測最佳值只差 177 元（0.005%） |
-| **服務** | FastAPI + Docker（Render） | `POST /predict` 單人、`POST /predict/batch` 一批人，機率與原因碼即時算，已上線 |
+| **服務** | FastAPI + Docker（Hugging Face Spaces） | `POST /predict` 單人、`POST /predict/batch` 一批人，機率與原因碼即時算，已上線 |
 | **監控** | PSI 特徵／分數漂移 | 上線後拿不到標籤，PSI 是唯一拿得到的品質訊號。閾值先量過雜訊地板才判讀，盲區也一起記錄（見下方亮點 6） |
 | **實驗追蹤** | MLflow | 每次訓練的參數、指標、模型版本都留檔，`make mlflow` 開 UI 看 |
 | **工程品質** | pytest 385 條 · ruff · GitHub Actions | CI 強制 299 條純邏輯測試零 skip —— 因為一個全部 skip 的套件也會顯示綠燈 |
@@ -83,7 +83,7 @@ flowchart TD
         DRIFT["PSI 漂移監控<br/>穩定 ≠ 還準"]
     end
 
-    API["🚀 FastAPI · Docker · ml-kkbox.onrender.com<br/>視覺化首頁 ／ POST /predict ／ Swagger 文件"]
+    API["🚀 FastAPI · Docker · Hugging Face Spaces<br/>視覺化首頁 ／ POST /predict ／ Swagger 文件"]
 
     T --> CUT
     L --> CUT

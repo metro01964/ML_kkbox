@@ -342,7 +342,7 @@ cohort。實測（Mar）：
 | 紅線 4：合併 cohort 時的 `GroupKFold(groups=msno)` | **已實作**（`make final`，[SPEC §7.20](SPEC.md)） | 合併 `feb_fixed + mar_fixed` 重訓的 `catboost_fixed_full` 用四段群組切分產生。違規對照組實測**每折驗證集有 75.2% 的用戶模型已見過**，而兩臂 log loss 只差 0.008 倍折間標準差 —— **量不到，但不表示規定可以省**（理由見 §7.20 第二點）|
 | `catboost_fixed_full` 沒有時間外分數 | **結構性缺席** | 兩個帶標籤的 cohort 都拿去訓練了，本地算不出新的時間外估計。該 artifact 帶 `eval_is_out_of_time: false` 與指回 `catboost_fixed` 的 `out_of_time_reference`。實測**同分布 CV 比時間外樂觀 13.0%**（0.15087 vs 0.17342）—— 引用分數時必須看這一欄 |
 | 群組公平性評估 | 未做 | 見 §10 |
-| Docker 部署與線上 Demo | **已交付** | 容器跑在 Render：視覺化首頁、`POST /predict`、Swagger 文件。原訂的 HF Spaces 因 2026-08 改制（Docker Space 需 PRO 訂閱）改為平台中立部署，同一份 `Dockerfile` 可搬回（見 `deploy/README.md`）|
+| Docker 部署與線上 Demo | **已交付** | 容器部署於 Hugging Face Spaces：視覺化首頁、`POST /predict`、Swagger 文件。使用平台中立的 `Dockerfile` 部署（見 `deploy/README.md`）|
 
 ---
 

@@ -8,11 +8,11 @@
 
 ## 線上 Demo：先看成果
 
-### 👉 **https://ml-kkbox.onrender.com**
+### 👉 **https://huggingface.co/spaces/lee851104/kkbox-demo**
 
 一個頁面、兩個視角：上半部是**一個人**，下半部是**一整個月**。
 
-[![Demo 上半部：情境選擇、滑桿、機率與原因碼](reports/figures/17_demo_page.png)](https://ml-kkbox.onrender.com)
+[![Demo 上半部：情境選擇、滑桿、機率與原因碼](reports/figures/17_demo_page.png)](https://huggingface.co/spaces/lee851104/kkbox-demo)
 
 ### 上半部：選一個情境，拉滑桿看機率怎麼動
 
@@ -31,7 +31,7 @@
 
 每拉一次滑桿都會**重新呼叫一次 `POST /predict`**，頁面上沒有任何預先算好的數字。
 
-[![Demo 下半部：營運視角與期望淨收益曲線](reports/figures/18_demo_page.png)](https://ml-kkbox.onrender.com)
+[![Demo 下半部：營運視角與期望淨收益曲線](reports/figures/18_demo_page.png)](https://huggingface.co/spaces/lee851104/kkbox-demo)
 
 ### 下半部：同一個模型套到整個月
 
@@ -39,7 +39,7 @@
 
 > 那條門檻 `p* = 成本 ÷ (挽回成功率 × LTV)` **沒有看過任何標籤**，純粹由三個商業假設推導。但它的落點與期望淨收益曲線的實測極大值只差 **NT$ 177（0.005%）**。
 
-### 🔧 API 技術文件：**https://ml-kkbox.onrender.com/docs**
+### 🔧 API 技術文件：**https://lee851104-kkbox-demo.hf.space/docs**
 
 Swagger UI。點 **POST /predict** → **Try it out** → 下拉選單挑情境 → **Execute**，看得到完整的請求／回應結構與所有欄位定義：
 
@@ -57,7 +57,7 @@ Swagger UI。點 **POST /predict** → **Try it out** → 下拉選單挑情境 
 >
 > 📋 **範例資料是合成的**，不是真實用戶 —— 依競賽規則，KKBox 資料與其衍生特徵不得散布（見 [MODEL_CARD.md](MODEL_CARD.md) 的授權聲明）。數值依本 README 已公開的分群統計手造，產生方式見 [src/serving/examples.py](src/serving/examples.py)。
 >
-> ❓ **為什麼不是 Hugging Face Spaces？** 本專案原訂部署到 HF Spaces（免費），但 HF 在 2026-08 改制：Docker 與 Gradio Space 需要 PRO 訂閱，只有 Static Space 免費。本專案改用平台中立的容器部署，同一份 `Dockerfile` 可直接搬回 HF。理由與各平台步驟見 [deploy/README.md](deploy/README.md)。
+> 線上 Demo 使用 [Hugging Face Spaces](https://huggingface.co/spaces/lee851104/kkbox-demo)，部署步驟見 [deploy/README.md](deploy/README.md)。
 
 ---
 
@@ -110,7 +110,7 @@ Swagger UI。點 **POST /predict** → **Try it out** → 下拉選單挑情境 
 | **程式** | `src/` 分資料／特徵／模型／評估／解釋／服務六層，22 個 `scripts/` 進入點 |
 | **測試** | **360 passed · 0 skipped**（約 80 秒）；八條紅線各有一個「餵違規資料會 raise」的守門測試 |
 | **CI** | GitHub Actions：ruff ＋ pytest，其中 299 條純邏輯測試要求**零 skip**（見 [CI 驗證了什麼](#ci-驗證了什麼以及沒驗證什麼)） |
-| **部署** | Docker 容器上線於 Render：視覺化首頁 ＋ `/predict` ＋ Swagger 文件 |
+| **部署** | Docker 容器上線於 Hugging Face Spaces：視覺化首頁 ＋ `/predict` ＋ Swagger 文件 |
 | **文件** | [SPEC.md](SPEC.md)（資料契約、驗證策略、八條紅線）、[MODEL_CARD.md](MODEL_CARD.md)（用途、⛔ 不可用於、監控盲區） |
 
 ### 三件被自己的實測推翻的計畫
@@ -180,7 +180,7 @@ flowchart TD
         DRIFT["PSI 漂移監控<br/>穩定 ≠ 還準"]
     end
 
-    API["🚀 FastAPI · Docker · ml-kkbox.onrender.com<br/>視覺化首頁 ／ POST /predict ／ Swagger 文件"]
+    API["🚀 FastAPI · Docker · Hugging Face Spaces<br/>視覺化首頁 ／ POST /predict ／ Swagger 文件"]
 
     T --> CUT
     L --> CUT
@@ -1212,7 +1212,7 @@ PSI **大小由 epsilon 決定**，所以標記 `epsilon_floored` 並把 epsilon
 ### 容器化與上線（2026-08-12 完成）
 
 [Dockerfile](Dockerfile) 加 [deploy/](deploy/) 的推論專用依賴，部署在
-**https://ml-kkbox.onrender.com/docs** 。設定與各平台步驟見 [deploy/README.md](deploy/README.md)。
+**https://lee851104-kkbox-demo.hf.space/docs** 。設定與各平台步驟見 [deploy/README.md](deploy/README.md)。
 
 三件過程中量出來或撞到的事：
 

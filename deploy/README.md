@@ -4,14 +4,13 @@
 
 ---
 
-## 為什麼不是 Hugging Face Spaces
+## 線上 Demo：Hugging Face Spaces
 
-本專案原訂部署到 Hugging Face Spaces（**免費**）。**該敘述在 2026-08
-已不成立**：HF 改為 Static Space 免費，Docker 與 Gradio Space 需要 PRO 訂閱
-（$9/月），免費帳號只剩 2 個 ZeroGPU 的 Gradio Space 額度。
+- [線上 Demo](https://huggingface.co/spaces/lee851104/kkbox-demo)
+- [API 文件](https://lee851104-kkbox-demo.hf.space/docs)
 
-本專案改用容器託管平台。**規定的意圖（一個公開、點得進去的 Demo 連結）完全滿足**，
-而且 `Dockerfile` 是平台中立的 —— 哪天訂了 PRO 要搬回 HF，同一份檔案直接用。
+本專案使用 Hugging Face Spaces 託管 Docker 容器。`Dockerfile` 維持平台中立，
+下方也保留 Koyeb / Render 的部署步驟供其他環境使用。
 
 ---
 
@@ -69,7 +68,7 @@ Koyeb / Render 也預設找那裡。
 
 Render 會自動注入 `$PORT`，不需要額外設定。
 
-## 之後搬回 Hugging Face（有 PRO 時）
+## 部署到 Hugging Face Spaces
 
 只差兩件事，程式碼完全不用改：
 
@@ -90,7 +89,7 @@ Render 會自動注入 `$PORT`，不需要額外設定。
 2. 加 remote 後推上去：
 
    ```bash
-   git remote add space https://huggingface.co/spaces/<帳號>/<space名稱>
+   git remote add space https://huggingface.co/spaces/lee851104/kkbox-demo
    ```
 
 `Dockerfile` 的 `PORT` 預設就是 7860（HF 的固定值），所以不用動。
@@ -113,9 +112,8 @@ docker run --rm -p 8000:7860 kkbox-churn
 
 ## Demo 怎麼用
 
-服務沒有自訂前端，**用 FastAPI 自動產生的 `/docs`**（Swagger UI）。這是刻意的選擇：
-它可以直接在網頁上填 payload、按 Execute、看回應，而且長得像技術文件而不是玩具。
-`src/serving/app.py` 的欄位刻意逐一寫出而非動態生成，就是為了讓 `/docs` 讀得懂。
+開啟線上 Demo 即可使用視覺化首頁，選擇情境並查看流失機率與原因碼。
+需要測試 API 時，開啟 `/docs`（Swagger UI），填寫 payload、按 Execute 查看回應。
 
 ⚠️ **`msno` 介面在部署環境是關閉的。** 它讀的 cohort 快取（3.0 GB）是 KKBox 競賽
 資料的衍生特徵，放上公開網站會與 `MODEL_CARD.md` 的授權聲明矛盾。Demo 只提供
